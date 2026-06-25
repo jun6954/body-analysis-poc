@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>체형 분석 PoC</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f0f;
+    color: #f0f0f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  header {
+    width: 100%;
+    max-width: 480px;
+    padding: 16px;
+    background: #1a1a1a;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  header h1 { font-size: 18px; font-weight: 700; }
+  header p { font-size: 12px; color: #888; margin-top: 2px; }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #2a2a2a;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+
+  /* Height input */
+  .height-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .height-row input {
+    flex: 1;
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    color: #f0f0f0;
+    font-size: 24px;
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: center;
+    outline: none;
+  }
+  .height-row input:focus { border-color: #4f9eff; }
+  .height-row .unit {
+    font-size: 18px;
+    color: #666;
+    font-weight: 600;
+    min-width: 30px;
+  }
+
+  /* Camera view */
+  #camera-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  #video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scaleX(-1); /* mirror */
+  }
+  #overlay-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(-1);
+    pointer-events: none;
+  }
+  #camera-status {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    pointer-events: none;
+  }
+  #camera-status .icon { font-size: 40px; margin-bottom: 8px; }
+
+  /* Pose quality indicator */
+  #pose-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.7);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    display: none;
+  }
+  #pose-badge.good { color: #4ade80; border: 1px solid #4ade80; }
+  #pose-badge.partial { color: #fbbf24; border: 1px solid #fbbf24; }
+  #pose-badge.bad { color: #f87171; border: 1px solid #f87171; }
+
+  /* Guide overlay */
+  #guide-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .body-guide {
+    width: 38%;
+    height: 80%;
+    border: 2px dashed rgba(79, 158, 255, 0.4);
+    border-radius: 40% 40% 30% 30% / 20% 20% 10% 10%;
+    position: relative;
+  }
+
+  /* Buttons */
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn:active { transform: scale(0.97); opacity: 0.85; }
+  .btn-primary { background: #4f9eff; color: #fff; }
+  .btn-primary:disabled { background: #2a3a4a; color: #4a6a8a; cursor: not-allowed; }
+  .btn-danger { background: #2a2a2a; color: #f87171; border: 1px solid #3a2a2a; }
+  .btn-capture { background: #22c55e; color: #fff; }
+  .btn-capture:disabled { background: #1a2a1a; color: #3a6a3a; cursor: not-allowed; }
+
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+
+  /* Tip */
+  .tip {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+
+  /* Results */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .result-item {
+    background: #222;
+    border-radius: 10px;
+    padding: 12px;
+    border: 1px solid #2a2a2a;
+  }
+  .result-item.highlight {
+    grid-column: 1 / -1;
+    border-color: #4f9eff44;
+    background: #1a2a3a;
+  }
+  .result-label {
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  .result-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f0f0f0;
+  }
+  .result-value.good { color: #4ade80; }
+  .result-value span { font-size: 13px; font-weight: 400; color: #888; }
+
+  .ratio-bar-wrap { margin-top: 8px; }
+  .ratio-bar-bg {
+    height: 6px;
+    background: #2a2a2a;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .ratio-bar-fill {
+    height: 100%;
+    background: #4f9eff;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+  .ratio-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #555;
+    margin-top: 3px;
+  }
+
+  /* Status / loading */
+  #loading-bar {
+    width: 100%;
+    height: 3px;
+    background: #2a2a2a;
+    border-radius: 2px;
+    overflow: hidden;
+    display: none;
+  }
+  #loading-bar.active { display: block; }
+  #loading-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4f9eff, #22c55e);
+    border-radius: 2px;
+    animation: loading 1.2s ease-in-out infinite;
+    width: 40%;
+  }
+  @keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
+  }
+
+  #status-msg {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    min-height: 18px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #2a2a2a;
+    margin: 12px 0;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  /* Visibility warning */
+  #visibility-warn {
+    background: #2a1a00;
+    border: 1px solid #6a3a00;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #fbbf24;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>체형 분석 PoC</h1>
+  <p>MediaPipe Pose · 카메라 기반 비율 측정</p>
+</header>
+
+<div class="container">
+
+  <!-- Height input -->
+  <div class="card">
+    <div class="card-title">내 키 입력</div>
+    <div class="height-row">
+      <input type="number" id="height-input" placeholder="170" min="100" max="230" inputmode="numeric">
+      <span class="unit">cm</span>
+    </div>
+    <div class="tip" style="margin-top:8px">정확한 cm 환산을 위해 키를 입력해 주세요</div>
+  </div>
+
+  <!-- Camera -->
+  <div class="card" style="padding: 12px;">
+    <div class="card-title">카메라 (전신이 보이도록 거리 조절)</div>
+    <div id="camera-wrapper">
+      <video id="video" playsinline autoplay muted></video>
+      <canvas id="overlay-canvas"></canvas>
+      <div id="camera-status">
+        <div class="icon">📷</div>
+        <div>카메라 시작을 눌러주세요</div>
+      </div>
+      <div id="guide-overlay"><div class="body-guide"></div></div>
+      <div id="pose-badge">●</div>
+    </div>
+
+    <div id="loading-bar" style="margin-top:8px"><div id="loading-fill"></div></div>
+    <div id="status-msg" style="margin-top:6px">준비 중</div>
+    <div id="visibility-warn">⚠️ 일부 키포인트가 보이지 않습니다. 전신이 화면에 들어오도록 조정해 주세요.</div>
+
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn btn-primary" id="btn-start" onclick="startCamera()">▶ 카메라 시작</button>
+      <button class="btn btn-danger" id="btn-stop" onclick="stopCamera()" style="display:none">■ 중지</button>
+    </div>
+    <button class="btn btn-capture" id="btn-capture" onclick="captureAndAnalyze()" style="margin-top:8px" disabled>📸 측정</button>
+    <div class="tip">전신이 가이드 안에 들어오면 측정 버튼을 누르세요</div>
+  </div>
+
+  <!-- Results -->
+  <div class="card" id="results-card" style="display:none">
+    <div class="card-title">측정 결과</div>
+    <div class="results-grid" id="results-grid"></div>
+    <div class="divider"></div>
+    <div class="section-title">비율 분석</div>
+    <div id="ratio-section"></div>
+    <div id="calibration-note" style="margin-top:12px; font-size:11px; color:#555; line-height:1.5;"></div>
+  </div>
+
+</div>
+
+<script type="module">
+// ─────────────────────────────────────────
+// MediaPipe Tasks Vision (CDN)
+// ─────────────────────────────────────────
+import { PoseLandmarker, FilesetResolver, DrawingUtils }
+  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+
+const WASM_PATH = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
+const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task";
+
+// Landmark indices
+const LM = {
+  NOSE: 0,
+  LEFT_SHOULDER: 11, RIGHT_SHOULDER: 12,
+  LEFT_HIP: 23, RIGHT_HIP: 24,
+  LEFT_KNEE: 25, RIGHT_KNEE: 26,
+  LEFT_ANKLE: 27, RIGHT_ANKLE: 28,
+  LEFT_HEEL: 29, RIGHT_HEEL: 30,
+  LEFT_FOOT_INDEX: 31, RIGHT_FOOT_INDEX: 32,
+};
+
+// State
+let poseLandmarker = null;
+let stream = null;
+let animId = null;
+let lastLandmarks = null;
+let isRunning = false;
+
+const video = document.getElementById('video');
+const overlayCanvas = document.getElementById('overlay-canvas');
+const ctx = overlayCanvas.getContext('2d');
+
+// ─── Init model ───
+async function initModel() {
+  setStatus('모델 로딩 중…');
+  showLoading(true);
+  try {
+    const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
+    poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+      baseOptions: {
+        modelAssetPath: MODEL_URL,
+        delegate: "GPU",
+      },
+      runningMode: "VIDEO",
+      numPoses: 1,
+      minPoseDetectionConfidence: 0.5,
+      minPosePresenceConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+    setStatus('모델 로딩 완료');
+  } catch (e) {
+    console.error(e);
+    setStatus('모델 로딩 실패: ' + e.message);
+  }
+  showLoading(false);
+}
+
+// ─── Camera ───
+window.startCamera = async function() {
+  if (!poseLandmarker) await initModel();
+  if (!poseLandmarker) return;
+
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 960 } },
+      audio: false,
+    });
+    video.srcObject = stream;
+    await new Promise(r => video.onloadedmetadata = r);
+    video.play();
+
+    document.getElementById('camera-status').style.display = 'none';
+    document.getElementById('btn-start').style.display = 'none';
+    document.getElementById('btn-stop').style.display = '';
+    document.getElementById('btn-capture').disabled = false;
+    document.getElementById('pose-badge').style.display = '';
+    isRunning = true;
+    loop();
+    setStatus('실시간 포즈 감지 중…');
+  } catch (e) {
+    if (e.name === 'NotAllowedError') {
+      setStatus('❌ 카메라 권한이 거부되었습니다. 브라우저 설정에서 허용해 주세요.');
+    } else {
+      setStatus('카메라 오류: ' + e.message);
+    }
+  }
+};
+
+window.stopCamera = function() {
+  isRunning = false;
+  if (animId) cancelAnimationFrame(animId);
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  video.srcObject = null;
+  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  document.getElementById('camera-status').style.display = '';
+  document.getElementById('btn-start').style.display = '';
+  document.getElementById('btn-stop').style.display = 'none';
+  document.getElementById('btn-capture').disabled = true;
+  document.getElementById('pose-badge').style.display = 'none';
+  document.getElementById('visibility-warn').style.display = 'none';
+  lastLandmarks = null;
+  setStatus('카메라 중지됨');
+};
+
+// ─── Detection loop ───
+function loop() {
+  if (!isRunning) return;
+
+  if (video.readyState >= 2) {
+    resizeCanvas();
+    const result = poseLandmarker.detectForVideo(video, performance.now());
+    if (result.landmarks && result.landmarks.length > 0) {
+      lastLandmarks = result.landmarks[0];
+      drawPose(result.landmarks[0], result.worldLandmarks?.[0]);
+      updatePoseBadge(lastLandmarks);
+    } else {
+      lastLandmarks = null;
+      ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+      setPoseBadge('bad', '포즈 없음');
+    }
+  }
+
+  animId = requestAnimationFrame(loop);
+}
+
+function resizeCanvas() {
+  const w = video.videoWidth || video.clientWidth;
+  const h = video.videoHeight || video.clientHeight;
+  if (overlayCanvas.width !== w || overlayCanvas.height !== h) {
+    overlayCanvas.width = w;
+    overlayCanvas.height = h;
+  }
+}
+
+// ─── Draw pose ───
+function drawPose(landmarks) {
+  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
+  const W = overlayCanvas.width;
+  const H = overlayCanvas.height;
+
+  // Connections
+  const CONNECTIONS = PoseLandmarker.POSE_CONNECTIONS;
+  ctx.strokeStyle = 'rgba(79,158,255,0.6)';
+  ctx.lineWidth = 2;
+  for (const [a, b] of CONNECTIONS) {
+    const lA = landmarks[a], lB = landmarks[b];
+    if (!lA || !lB) continue;
+    if (lA.visibility < 0.3 || lB.visibility < 0.3) continue;
+    ctx.beginPath();
+    ctx.moveTo(lA.x * W, lA.y * H);
+    ctx.lineTo(lB.x * W, lB.y * H);
+    ctx.stroke();
+  }
+
+  // Key points
+  const keyIndices = Object.values(LM);
+  for (let i = 0; i < landmarks.length; i++) {
+    const lm = landmarks[i];
+    if (lm.visibility < 0.3) continue;
+    const isKey = keyIndices.includes(i);
+    ctx.beginPath();
+    ctx.arc(lm.x * W, lm.y * H, isKey ? 5 : 3, 0, 2 * Math.PI);
+    ctx.fillStyle = isKey ? '#4ade80' : 'rgba(255,255,255,0.4)';
+    ctx.fill();
+  }
+
+  // Measurement lines
+  drawMeasureLine(landmarks, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, '#fbbf24', '어깨');
+  drawMeasureLine(landmarks, LM.LEFT_HIP, LM.RIGHT_HIP, '#f87171', '골반');
+}
+
+function drawMeasureLine(lms, idxA, idxB, color, label) {
+  const W = overlayCanvas.width, H = overlayCanvas.height;
+  const a = lms[idxA], b = lms[idxB];
+  if (!a || !b || a.visibility < 0.3 || b.visibility < 0.3) return;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(a.x * W, a.y * H);
+  ctx.lineTo(b.x * W, b.y * H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // label
+  ctx.fillStyle = color;
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText(label, ((a.x + b.x) / 2) * W + 4, ((a.y + b.y) / 2) * H - 4);
+}
+
+// ─── Pose quality ───
+function updatePoseBadge(lms) {
+  const needed = [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP,
+                  LM.LEFT_ANKLE, LM.RIGHT_ANKLE];
+  const visible = needed.filter(i => lms[i]?.visibility > 0.5).length;
+
+  if (visible === needed.length) {
+    setPoseBadge('good', '포즈 양호');
+    document.getElementById('visibility-warn').style.display = 'none';
+  } else if (visible >= 4) {
+    setPoseBadge('partial', '부분 감지');
+    document.getElementById('visibility-warn').style.display = 'block';
+  } else {
+    setPoseBadge('bad', '포즈 불량');
+    document.getElementById('visibility-warn').style.display = 'block';
+  }
+}
+
+function setPoseBadge(cls, text) {
+  const el = document.getElementById('pose-badge');
+  el.className = 'id="pose-badge ' + cls;
+  el.className = cls;
+  el.id = 'pose-badge';
+  el.style.display = '';
+  el.textContent = '● ' + text;
+  // manually set color
+  if (cls === 'good') el.style.color = '#4ade80', el.style.borderColor = '#4ade80';
+  else if (cls === 'partial') el.style.color = '#fbbf24', el.style.borderColor = '#fbbf24';
+  else el.style.color = '#f87171', el.style.borderColor = '#f87171';
+}
+
+// ─── Capture & Analyze ───
+window.captureAndAnalyze = function() {
+  if (!lastLandmarks) {
+    setStatus('포즈가 감지되지 않았습니다. 전신이 보이도록 조정해 주세요.');
+    return;
+  }
+
+  const lms = lastLandmarks;
+  const heightCm = parseFloat(document.getElementById('height-input').value);
+
+  // Pixel distances (normalized 0-1, use video resolution ratio)
+  // Using normalized coords (0-1 range relative to image)
+  const W = video.videoWidth || 1;
+  const H = video.videoHeight || 1;
+
+  function dist(a, b) {
+    const dx = (a.x - b.x) * W;
+    const dy = (a.y - b.y) * H;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  function midpoint(a, b) {
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2 };
+  }
+
+  const lShoulder = lms[LM.LEFT_SHOULDER];
+  const rShoulder = lms[LM.RIGHT_SHOULDER];
+  const lHip = lms[LM.LEFT_HIP];
+  const rHip = lms[LM.RIGHT_HIP];
+  const lAnkle = lms[LM.LEFT_ANKLE];
+  const rAnkle = lms[LM.RIGHT_ANKLE];
+  const lKnee = lms[LM.LEFT_KNEE];
+  const rKnee = lms[LM.RIGHT_KNEE];
+  const nose = lms[LM.NOSE];
+
+  const midShoulder = midpoint(lShoulder, rShoulder);
+  const midHip = midpoint(lHip, rHip);
+  const midAnkle = midpoint(lAnkle, rAnkle);
+  const midKnee = midpoint(lKnee, rKnee);
+
+  // Pixel measurements
+  const shoulderWidthPx = dist(lShoulder, rShoulder);
+  const hipWidthPx = dist(lHip, rHip);
+  const upperBodyPx = dist({ x: midShoulder.x, y: midShoulder.y }, { x: midHip.x, y: midHip.y }) * W / W;
+  // re-calc properly
+  const upperBodyPxV = Math.sqrt(
+    Math.pow((midShoulder.x - midHip.x) * W, 2) +
+    Math.pow((midShoulder.y - midHip.y) * H, 2)
+  );
+  const lowerBodyPxV = Math.sqrt(
+    Math.pow((midHip.x - midAnkle.x) * W, 2) +
+    Math.pow((midHip.y - midAnkle.y) * H, 2)
+  );
+  const thighPxV = Math.sqrt(
+    Math.pow((midHip.x - midKnee.x) * W, 2) +
+    Math.pow((midHip.y - midKnee.y) * H, 2)
+  );
+  const shinPxV = Math.sqrt(
+    Math.pow((midKnee.x - midAnkle.x) * W, 2) +
+    Math.pow((midKnee.y - midAnkle.y) * H, 2)
+  );
+
+  // Total height estimate: nose to mid-ankle (approximate head + body)
+  const headOffset = 0.07; // ~7% of height for head above nose
+  const nosePxY = nose.y * H;
+  const anklePxY = midAnkle.y * H;
+  const bodyHeightPx = (anklePxY - nosePxY) / (1 - headOffset);
+
+  // Scale factor
+  let scaleCm = null;
+  let calibNote = '';
+  if (heightCm && !isNaN(heightCm) && heightCm > 100) {
+    scaleCm = heightCm / bodyHeightPx;
+    calibNote = `키 ${heightCm}cm 기준으로 환산 (픽셀 높이 ${Math.round(bodyHeightPx)}px → 1px ≈ ${scaleCm.toFixed(3)}cm)`;
+  } else {
+    calibNote = '키 미입력 — 비율만 표시됩니다';
+  }
+
+  function toCm(px) {
+    if (!scaleCm) return null;
+    return Math.round(px * scaleCm * 10) / 10;
+  }
+  function fmt(cm, px) {
+    if (cm !== null) return `${cm}<span>cm</span>`;
+    return `${(px / bodyHeightPx * 100).toFixed(1)}<span>%</span>`;
+  }
+
+  // Ratios
+  const shoulderHipRatio = shoulderWidthPx / hipWidthPx;
+  const legHeightRatio = lowerBodyPxV / bodyHeightPx;
+
+  // Visibility check
+  const allVis = [lShoulder, rShoulder, lHip, rHip, lAnkle, rAnkle]
+    .every(lm => lm.visibility > 0.4);
+
+  // Render results
+  const grid = document.getElementById('results-grid');
+  grid.innerHTML = `
+    <div class="result-item highlight">
+      <div class="result-label">추정 키 (캘리브레이션)</div>
+      <div class="result-value good">${heightCm || '?'}<span>cm</span></div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">어깨 너비</div>
+      <div class="result-value">${fmt(toCm(shoulderWidthPx), shoulderWidthPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">골반 너비</div>
+      <div class="result-value">${fmt(toCm(hipWidthPx), hipWidthPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">상체 길이</div>
+      <div class="result-value">${fmt(toCm(upperBodyPxV), upperBodyPxV)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">다리 길이</div>
+      <div class="result-value">${fmt(toCm(lowerBodyPxV), lowerBodyPxV)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">허벅지 길이</div>
+      <div class="result-value">${fmt(toCm(thighPxV), thighPxV)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">종아리 길이</div>
+      <div class="result-value">${fmt(toCm(shinPxV), shinPxV)}</div>
+    </div>
+  `;
+
+  // Ratio section
+  const ratioSection = document.getElementById('ratio-section');
+  ratioSection.innerHTML = `
+    ${ratioBar('어깨-골반 비율', shoulderHipRatio, 0.8, 1.4, '0.8', '1.4',
+      `어깨가 골반보다 ${shoulderHipRatio > 1 ? (((shoulderHipRatio-1)*100).toFixed(0)+'% 넓음') : '좁음'}`)}
+    ${ratioBar('다리-키 비율', legHeightRatio, 0.40, 0.60, '40%', '60%',
+      `신체 비율에서 다리가 ${(legHeightRatio*100).toFixed(1)}% 차지`)}
+  `;
+
+  document.getElementById('calibration-note').textContent = calibNote;
+
+  if (!allVis) {
+    document.getElementById('calibration-note').textContent +=
+      ' ⚠️ 일부 키포인트 신뢰도가 낮아 측정 정확도가 떨어질 수 있습니다.';
+  }
+
+  document.getElementById('results-card').style.display = '';
+  document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
+};
+
+function ratioBar(label, value, min, max, minLabel, maxLabel, desc) {
+  const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+  return `
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:13px;font-weight:600">${label}</span>
+        <span style="font-size:13px;color:#4f9eff;font-weight:700">${value.toFixed(2)}</span>
+      </div>
+      <div class="ratio-bar-bg"><div class="ratio-bar-fill" style="width:${pct}%"></div></div>
+      <div class="ratio-bar-label"><span>${minLabel}</span><span>${maxLabel}</span></div>
+      <div style="font-size:11px;color:#666;margin-top:3px">${desc}</div>
+    </div>
+  `;
+}
+
+// ─── Helpers ───
+function setStatus(msg) {
+  document.getElementById('status-msg').textContent = msg;
+}
+function showLoading(on) {
+  document.getElementById('loading-bar').className = on ? 'active' : '';
+}
+
+// ─── Auto-init model on page load ───
+initModel();
+</script>
+</body>
+</html>
