@@ -29,18 +29,15 @@
       linear-gradient(180deg, #071018 0%, var(--bg) 100%);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 
   header {
-    width: 100%;
-    max-width: 1100px;
-    padding: 28px 20px 16px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 28px 20px 12px;
   }
 
-  header h1 {
+  h1 {
     font-size: 30px;
     font-weight: 800;
     letter-spacing: -0.03em;
@@ -52,12 +49,42 @@
     line-height: 1.6;
   }
 
-  .container {
-    width: 100%;
-    max-width: 1100px;
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
     padding: 0 20px 32px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+
+  .tab-btn {
+    border: 1px solid rgba(92, 200, 255, 0.18);
+    background: rgba(92, 200, 255, 0.06);
+    color: #d8f3ff;
+    border-radius: 999px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--accent), #338dff);
+    color: #02111c;
+    border-color: transparent;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .layout {
     display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
+    grid-template-columns: 1.2fr 0.8fr;
     gap: 18px;
     align-items: start;
   }
@@ -83,16 +110,17 @@
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 14px;
   }
 
-  .card-header-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 14px;
-  }
+  .card-header + * { margin-top: 0; }
 
   .pill {
     display: inline-flex;
@@ -107,7 +135,13 @@
     font-weight: 600;
   }
 
-  .form-grid {
+  .subtext {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .field-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
@@ -125,8 +159,8 @@
   }
 
   .field input,
-  .field select,
-  .field textarea {
+  .field textarea,
+  .field select {
     width: 100%;
     background: rgba(11, 17, 23, 0.72);
     color: var(--text);
@@ -138,111 +172,16 @@
   }
 
   .field textarea {
-    min-height: 108px;
+    min-height: 120px;
     resize: vertical;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
+  .field textarea:focus,
+  .field select:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.15);
-  }
-
-  .height-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .height-row input {
-    flex: 1;
-    text-align: center;
-    font-size: 24px;
-    font-weight: 800;
-  }
-
-  .height-row .unit {
-    min-width: 34px;
-    font-size: 18px;
-    color: var(--muted);
-    font-weight: 700;
-  }
-
-  #camera-wrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    background: #02070c;
-    border-radius: 18px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  #video,
-  #overlay-canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  #video {
-    object-fit: cover;
-    display: block;
-  }
-
-  #overlay-canvas {
-    pointer-events: none;
-  }
-
-  #camera-status {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 24px;
-    color: var(--muted);
-    background: linear-gradient(180deg, rgba(2, 7, 12, 0.32), rgba(2, 7, 12, 0.58));
-  }
-
-  #camera-status .icon {
-    font-size: 44px;
-    margin-bottom: 10px;
-  }
-
-  #pose-badge {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    padding: 7px 12px;
-    border-radius: 999px;
-    background: rgba(3, 10, 16, 0.84);
-    font-size: 12px;
-    font-weight: 700;
-    display: none;
-    border: 1px solid transparent;
-  }
-
-  #guide-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-
-  .body-guide {
-    width: 38%;
-    height: 80%;
-    border: 2px dashed rgba(92, 200, 255, 0.45);
-    border-radius: 40% 40% 30% 30% / 20% 20% 10% 10%;
-    position: relative;
-    box-shadow: 0 0 0 999px rgba(2, 7, 12, 0.22);
   }
 
   .btn-row {
@@ -252,13 +191,13 @@
   }
 
   .btn {
-    padding: 13px 14px;
-    border: none;
+    padding: 12px 14px;
     border-radius: 12px;
+    border: none;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: transform 0.14s ease, opacity 0.14s ease, border-color 0.14s ease;
+    transition: transform 0.14s ease, opacity 0.14s ease;
   }
 
   .btn:active {
@@ -288,18 +227,171 @@
     color: #042114;
   }
 
-  .btn:disabled {
-    opacity: 0.42;
-    cursor: not-allowed;
-    transform: none;
+  .btn-fill { flex: 1; }
+  .btn:disabled { opacity: 0.42; cursor: not-allowed; transform: none; }
+
+  .search-wrap {
+    position: relative;
   }
 
-  .btn-fill { flex: 1; }
+  .search-results {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: #0d151d;
+    border: 1px solid #294156;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
 
-  .tip {
-    font-size: 12px;
+  .search-item {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    padding: 12px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .search-item:last-child { border-bottom: none; }
+  .search-item:hover { background: rgba(92, 200, 255, 0.08); }
+  .search-item strong { display: block; font-size: 14px; }
+  .search-item span { font-size: 12px; color: var(--muted); }
+
+  .patient-summary {
+    padding: 14px;
+    border-radius: 16px;
+    background: rgba(92, 200, 255, 0.08);
+    border: 1px solid rgba(92, 200, 255, 0.18);
+  }
+
+  .patient-summary h3 {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+
+  .patient-summary p {
+    color: #d6e8f3;
     line-height: 1.6;
+  }
+
+  .height-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .height-row input {
+    flex: 1;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  .height-row .unit {
+    min-width: 34px;
+    font-size: 18px;
     color: var(--muted);
+    font-weight: 700;
+  }
+
+  .visit-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .visit-stat {
+    padding: 12px;
+    border-radius: 14px;
+    background: rgba(8, 14, 20, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .visit-stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .visit-stat-value {
+    font-size: 20px;
+    font-weight: 800;
+  }
+
+  #camera-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #02070c;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  #video,
+  #overlay-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #video {
+    object-fit: cover;
+    display: block;
+  }
+
+  #overlay-canvas { pointer-events: none; }
+
+  #camera-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    background: linear-gradient(180deg, rgba(2, 7, 12, 0.32), rgba(2, 7, 12, 0.58));
+  }
+
+  #camera-status .icon { font-size: 44px; margin-bottom: 10px; }
+
+  #pose-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(3, 10, 16, 0.84);
+    font-size: 12px;
+    font-weight: 700;
+    display: none;
+    border: 1px solid transparent;
+  }
+
+  #guide-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .body-guide {
+    width: 38%;
+    height: 80%;
+    border: 2px dashed rgba(92, 200, 255, 0.45);
+    border-radius: 40% 40% 30% 30% / 20% 20% 10% 10%;
+    box-shadow: 0 0 0 999px rgba(2, 7, 12, 0.22);
   }
 
   #loading-bar {
@@ -353,6 +445,128 @@
     color: #d8f2ff;
   }
 
+  .slot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .slot-card {
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(8, 14, 20, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+  }
+
+  .slot-card.active {
+    border-color: rgba(92, 200, 255, 0.5);
+    box-shadow: inset 0 0 0 1px rgba(92, 200, 255, 0.4);
+  }
+
+  .slot-card.done {
+    border-color: rgba(74, 222, 128, 0.35);
+    background: rgba(74, 222, 128, 0.08);
+  }
+
+  .slot-phase {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .slot-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .slot-status {
+    font-size: 12px;
+    color: #dcecf5;
+  }
+
+  .capture-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1fr;
+    gap: 14px;
+  }
+
+  .capture-preview,
+  .record-image,
+  .compare-image {
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .capture-preview img,
+  .record-image img,
+  .compare-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .capture-preview-empty {
+    min-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .recommendation-box {
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(126, 240, 198, 0.08), rgba(92, 200, 255, 0.08));
+    border: 1px solid rgba(126, 240, 198, 0.2);
+    padding: 16px;
+  }
+
+  .recommendation-box h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .recommendation-box p {
+    color: #d2e8f4;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  .recommendation-reason {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(8, 14, 20, 0.36);
+    font-size: 13px;
+    line-height: 1.7;
+    color: #d9edf7;
+  }
+
+  .chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    font-size: 12px;
+    color: #d9ecf7;
+  }
+
   .results-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -400,9 +614,7 @@
     letter-spacing: 0.08em;
   }
 
-  .ratio-block {
-    margin-bottom: 14px;
-  }
+  .ratio-block { margin-bottom: 14px; }
 
   .ratio-meta {
     display: flex;
@@ -434,342 +646,356 @@
     color: var(--muted);
   }
 
-  .capture-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 1fr;
-    gap: 14px;
-    margin-bottom: 16px;
-  }
-
-  .capture-preview {
-    border-radius: 16px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    min-height: 220px;
-  }
-
-  .capture-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .capture-preview-empty {
+  .record-list {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 220px;
-    padding: 20px;
-    text-align: center;
-    color: var(--muted);
-    font-size: 13px;
-    line-height: 1.7;
+    flex-direction: column;
+    gap: 14px;
   }
 
-  .recommendation-box {
-    border-radius: 16px;
-    background: linear-gradient(180deg, rgba(126, 240, 198, 0.08), rgba(92, 200, 255, 0.08));
-    border: 1px solid rgba(126, 240, 198, 0.2);
-    padding: 16px;
+  .record-card {
+    padding: 14px;
+    border-radius: 18px;
+    background: rgba(8, 14, 20, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
 
-  .recommendation-box h3 {
-    font-size: 20px;
+  .record-card h3 {
+    font-size: 18px;
     margin-bottom: 6px;
   }
 
-  .recommendation-box p {
-    color: #d2e8f4;
-    line-height: 1.7;
-    font-size: 14px;
-  }
-
-  .recommendation-list,
-  .tag-list,
-  .gallery-summary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .tag,
-  .summary-chip {
-    display: inline-flex;
-    align-items: center;
-    padding: 7px 10px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
+  .record-meta {
     font-size: 12px;
-    color: #d9ecf7;
-  }
-
-  .recommendation-reason {
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    background: rgba(8, 14, 20, 0.36);
-    font-size: 13px;
-    line-height: 1.7;
-    color: #d9edf7;
-  }
-
-  .disclaimer {
-    margin-top: 12px;
-    font-size: 11px;
     color: var(--muted);
+    margin-bottom: 12px;
     line-height: 1.6;
   }
 
-  .gallery-grid {
+  .compare-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
   }
 
-  .gallery-item {
-    background: rgba(8, 14, 20, 0.58);
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    display: flex;
-    flex-direction: column;
+  .compare-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 14px;
+    padding: 10px;
   }
 
-  .gallery-item img {
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    display: block;
+  .compare-card h4 {
+    font-size: 13px;
+    margin-bottom: 8px;
   }
 
-  .gallery-body {
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
+  .compare-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
 
-  .gallery-title {
-    font-size: 15px;
-    font-weight: 700;
-  }
-
-  .gallery-meta {
-    font-size: 12px;
+  .compare-caption {
+    font-size: 11px;
     color: var(--muted);
-    line-height: 1.5;
+    margin-bottom: 4px;
   }
 
-  .gallery-actions {
+  .record-image,
+  .compare-image {
+    aspect-ratio: 3 / 4;
+  }
+
+  .record-actions {
     display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-
-  .gallery-actions .btn {
-    flex: 1;
-    padding: 10px 12px;
-    font-size: 12px;
-  }
-
-  .mono {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    justify-content: flex-end;
+    margin-top: 12px;
   }
 
   .hidden { display: none !important; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 
-  @media (max-width: 920px) {
-    .container {
+  @media (max-width: 980px) {
+    .layout,
+    .capture-layout {
       grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 640px) {
-    header {
-      padding: 24px 16px 12px;
-    }
-
-    header h1 {
-      font-size: 24px;
-    }
-
-    .container {
-      padding: 0 16px 24px;
-    }
-
-    .form-grid,
-    .capture-layout,
+  @media (max-width: 720px) {
+    header { padding: 24px 16px 12px; }
+    h1 { font-size: 24px; }
+    .page { padding: 0 16px 24px; }
+    .field-grid,
+    .slot-grid,
     .results-grid,
-    .gallery-grid {
+    .compare-grid,
+    .visit-summary {
+      grid-template-columns: 1fr;
+    }
+    .compare-pair {
       grid-template-columns: 1fr;
     }
   }
 </style>
 </head>
 <body>
-
 <header>
   <h1>체형 분석 PoC</h1>
-  <p>촬영 대상 저장, 날짜별 사진 갤러리, 도수치료 추천 가이드를 포함한 로컬 저장형 프로토타입입니다.</p>
+  <p>치료사가 환자별 방문 기록을 검색하고, 진료 전/후 정면·측면·후면 촬영을 저장하며, 오늘의 중점 관찰 포인트를 확인하는 프로토타입입니다.</p>
 </header>
 
-<div class="container">
-  <div class="stack">
-    <div class="card">
-      <div class="card-header-row">
-        <div class="card-title" style="margin-bottom:0">촬영 대상 설정</div>
-        <div class="pill" id="subject-pill">선택된 대상 없음</div>
-      </div>
-
-      <div class="form-grid">
-        <div class="field">
-          <label for="subject-select">기존 대상 선택</label>
-          <select id="subject-select"></select>
-        </div>
-        <div class="field">
-          <label for="height-input">키 입력</label>
-          <div class="height-row">
-            <input type="number" id="height-input" placeholder="170" min="100" max="230" inputmode="numeric">
-            <span class="unit">cm</span>
-          </div>
-        </div>
-        <div class="field">
-          <label for="subject-name">신규 대상 이름</label>
-          <input type="text" id="subject-name" placeholder="예: 김OO / 환자 A">
-        </div>
-        <div class="field">
-          <label for="subject-note">메모</label>
-          <input type="text" id="subject-note" placeholder="예: 허리 불편감, 1차 촬영">
-        </div>
-      </div>
-
-      <div class="btn-row" style="margin-top:12px">
-        <button class="btn btn-primary btn-fill" id="btn-save-subject">대상 저장</button>
-        <button class="btn btn-secondary" id="btn-new-subject">새 입력으로 초기화</button>
-      </div>
-      <div class="tip" style="margin-top:10px">대상을 저장해 두면 촬영 날짜별로 다시 불러와 사진과 추천 이력을 확인할 수 있습니다.</div>
-    </div>
-
-    <div class="card" style="padding:14px">
-      <div class="card-header-row">
-        <div class="card-title" style="margin-bottom:0">카메라 측정</div>
-        <div class="pill">실시간 포즈 감지</div>
-      </div>
-
-      <div id="camera-wrapper">
-        <video id="video" playsinline autoplay muted></video>
-        <canvas id="overlay-canvas"></canvas>
-        <div id="camera-status">
-          <div>
-            <div class="icon">📷</div>
-            <div>카메라 시작을 눌러주세요</div>
-          </div>
-        </div>
-        <div id="guide-overlay"><div class="body-guide"></div></div>
-        <div id="pose-badge">●</div>
-      </div>
-
-      <div id="loading-bar" style="margin-top:10px"><div id="loading-fill"></div></div>
-      <div id="status-msg" style="margin-top:8px">준비 중</div>
-      <div id="visibility-warn" style="margin-top:10px">일부 키포인트가 충분히 보이지 않습니다. 전신이 화면 안에 들어오도록 거리와 각도를 조정해 주세요.</div>
-
-      <div class="btn-row" style="margin-top:12px">
-        <button class="btn btn-primary btn-fill" id="btn-start" type="button">▶ 카메라 시작</button>
-        <button class="btn btn-danger btn-fill hidden" id="btn-stop" type="button">■ 중지</button>
-      </div>
-      <button class="btn btn-capture" id="btn-capture" type="button" style="width:100%; margin-top:8px" disabled>📸 촬영 후 분석 저장</button>
-      <div class="tip" style="margin-top:10px">캡처 시 사진, 측정값, 추천 가이드가 함께 저장됩니다.</div>
-    </div>
-
-    <div class="card hidden" id="results-card">
-      <div class="card-header-row">
-        <div class="card-title" style="margin-bottom:0">측정 결과</div>
-        <div class="pill" id="capture-timestamp-pill">최근 촬영</div>
-      </div>
-
-      <div class="capture-layout">
-        <div class="capture-preview" id="capture-preview"></div>
-        <div class="recommendation-box">
-          <div class="card-title" style="margin-bottom:8px">추천 가이드</div>
-          <h3 id="recommendation-title">가이드 준비 중</h3>
-          <p id="recommendation-summary">촬영 후 자동 분석 결과가 표시됩니다.</p>
-          <div class="recommendation-reason" id="recommendation-reason">촬영 전에는 가이드 근거가 표시되지 않습니다.</div>
-          <div class="recommendation-list" id="recommendation-therapies"></div>
-          <div class="tag-list" id="recommendation-tags"></div>
-          <div class="disclaimer" id="recommendation-disclaimer"></div>
-        </div>
-      </div>
-
-      <div class="results-grid" id="results-grid"></div>
-
-      <div class="section-title">비율 분석</div>
-      <div id="ratio-section"></div>
-      <div id="calibration-note" class="tip" style="margin-top:12px"></div>
-    </div>
+<div class="page">
+  <div class="tabs">
+    <button class="tab-btn active" type="button" data-tab="capture">촬영</button>
+    <button class="tab-btn" type="button" data-tab="records">환자 기록</button>
+    <button class="tab-btn" type="button" data-tab="rules">추천 기준 관리</button>
   </div>
 
-  <div class="stack">
-    <div class="card">
-      <div class="card-header-row">
-        <div>
-          <div class="card-title" style="margin-bottom:6px">학습 가이드 데이터</div>
-          <div class="tip">JSON 또는 YAML로 규칙을 수정하고 저장할 수 있습니다.</div>
+  <section class="tab-panel active" data-panel="capture">
+    <div class="layout">
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">환자 찾기</div>
+              <div class="subtext">재진 환자는 이름으로 바로 검색하고, 없으면 신규 등록하면 됩니다.</div>
+            </div>
+            <div class="pill" id="selected-patient-pill">환자 미선택</div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="patient-search-input">환자 검색</label>
+              <div class="search-wrap">
+                <input type="text" id="patient-search-input" autocomplete="off" placeholder="환자명 입력">
+                <div id="patient-search-results" class="search-results hidden"></div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="height-input">오늘 촬영 기준 키</label>
+              <div class="height-row">
+                <input type="number" id="height-input" placeholder="170" min="100" max="230" inputmode="numeric">
+                <span class="unit">cm</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="patient-summary hidden" id="patient-summary" style="margin-top:12px">
+            <h3 id="patient-summary-name"></h3>
+            <p id="patient-summary-note"></p>
+            <div class="visit-summary">
+              <div class="visit-stat">
+                <div class="visit-stat-label">총 방문 기록</div>
+                <div class="visit-stat-value" id="patient-visit-count">0</div>
+              </div>
+              <div class="visit-stat">
+                <div class="visit-stat-label">최근 방문일</div>
+                <div class="visit-stat-value" id="patient-last-visit">-</div>
+              </div>
+              <div class="visit-stat">
+                <div class="visit-stat-label">오늘 촬영 진행</div>
+                <div class="visit-stat-value" id="today-progress">0 / 6</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title">신규 환자 등록</div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="patient-name-input">이름</label>
+              <input type="text" id="patient-name-input" placeholder="예: 홍길동">
+            </div>
+            <div class="field">
+              <label for="patient-note-input">메모</label>
+              <input type="text" id="patient-note-input" placeholder="예: 허리 불편감, 재평가 예정">
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn btn-primary btn-fill" id="btn-save-patient" type="button">신규 환자 등록</button>
+            <button class="btn btn-secondary" id="btn-clear-patient" type="button">입력 초기화</button>
+          </div>
         </div>
-        <div class="pill" id="guide-status-pill">기본 데이터</div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">오늘 촬영 순서</div>
+              <div class="subtext">진료 전 3장, 진료 후 3장을 한 방문 기록으로 저장합니다. 카드를 눌러 현재 촬영 대상을 선택하세요.</div>
+            </div>
+            <div class="pill" id="active-slot-pill">진료 전 · 정면</div>
+          </div>
+
+          <div class="slot-grid" id="slot-grid"></div>
+        </div>
+
+        <div class="card" style="padding:14px">
+          <div class="card-header">
+            <div>
+              <div class="card-title">카메라</div>
+              <div class="subtext">선택한 촬영 칸에 바로 저장됩니다.</div>
+            </div>
+            <div class="pill">실시간 포즈 감지</div>
+          </div>
+
+          <div id="camera-wrapper">
+            <video id="video" playsinline autoplay muted></video>
+            <canvas id="overlay-canvas"></canvas>
+            <div id="camera-status">
+              <div>
+                <div class="icon">📷</div>
+                <div>카메라 시작을 눌러주세요</div>
+              </div>
+            </div>
+            <div id="guide-overlay"><div class="body-guide"></div></div>
+            <div id="pose-badge">●</div>
+          </div>
+
+          <div id="loading-bar" style="margin-top:10px"><div id="loading-fill"></div></div>
+          <div id="status-msg" style="margin-top:8px">준비 중</div>
+          <div id="visibility-warn" style="margin-top:10px">일부 키포인트가 충분히 보이지 않습니다. 전신이 화면 안에 들어오도록 거리와 각도를 조정해 주세요.</div>
+
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn btn-primary btn-fill" id="btn-start" type="button">▶ 카메라 시작</button>
+            <button class="btn btn-danger btn-fill hidden" id="btn-stop" type="button">■ 중지</button>
+          </div>
+          <button class="btn btn-capture" id="btn-capture" type="button" style="width:100%; margin-top:8px" disabled>선택한 칸에 촬영 저장</button>
+        </div>
       </div>
 
-      <div class="form-grid" style="margin-bottom:12px">
-        <div class="field">
-          <label for="guide-format">편집 형식</label>
-          <select id="guide-format">
-            <option value="yaml">YAML</option>
-            <option value="json">JSON</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="gallery-date-filter">날짜 필터</label>
-          <input type="date" id="gallery-date-filter">
-        </div>
-      </div>
+      <div class="stack">
+        <div class="card hidden" id="results-card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">선택한 촬영 결과</div>
+              <div class="subtext" id="capture-timestamp-pill">최근 촬영</div>
+            </div>
+            <div class="pill" id="capture-slot-pill">진료 전 · 정면</div>
+          </div>
 
-      <div class="field">
-        <label for="guide-editor">가이드 데이터 편집기</label>
-        <textarea id="guide-editor" class="mono"></textarea>
-      </div>
+          <div class="capture-layout">
+            <div class="capture-preview" id="capture-preview"></div>
+            <div class="recommendation-box">
+              <div class="card-title" style="margin-bottom:8px">오늘 중점 확인</div>
+              <h3 id="recommendation-title">가이드 준비 중</h3>
+              <p id="recommendation-summary">진료 전 촬영을 저장하면 오늘 우선적으로 볼 부분이 표시됩니다.</p>
+              <div class="recommendation-reason" id="recommendation-reason">진료 후 촬영은 기록 중심으로 저장됩니다.</div>
+              <div class="chip-list" id="recommendation-therapies"></div>
+              <div class="chip-list" id="recommendation-tags"></div>
+              <div class="subtext" id="recommendation-disclaimer" style="margin-top:12px"></div>
+            </div>
+          </div>
 
-      <div class="btn-row" style="margin-top:12px">
-        <button class="btn btn-primary btn-fill" id="btn-save-guide">가이드 저장</button>
-        <button class="btn btn-secondary" id="btn-reset-guide">기본값 복원</button>
+          <div class="results-grid" id="results-grid"></div>
+          <div class="section-title">비율 분석</div>
+          <div id="ratio-section"></div>
+          <div class="subtext" id="calibration-note" style="margin-top:12px"></div>
+        </div>
       </div>
-      <div class="btn-row" style="margin-top:8px">
-        <button class="btn btn-secondary btn-fill" id="btn-import-guide">파일 불러오기</button>
-        <button class="btn btn-secondary btn-fill" id="btn-export-guide">현재 데이터 내보내기</button>
-      </div>
-      <input type="file" id="guide-file-input" accept=".json,.yaml,.yml" class="hidden">
-      <div class="message-box" id="guide-message" style="margin-top:12px">도수치료 기본 가이드가 로드되어 있습니다.</div>
     </div>
+  </section>
 
-    <div class="card">
-      <div class="card-header-row">
-        <div>
-          <div class="card-title" style="margin-bottom:6px">촬영 갤러리</div>
-          <div class="tip">대상과 날짜 기준으로 누적 저장된 사진을 다시 확인할 수 있습니다.</div>
+  <section class="tab-panel" data-panel="records">
+    <div class="layout">
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">환자 기록 찾기</div>
+              <div class="subtext">이름으로 환자를 찾은 뒤, 방문일별로 진료 전/후 정면·측면·후면을 비교할 수 있습니다.</div>
+            </div>
+            <div class="pill" id="records-count-pill">0건</div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="records-search-input">환자 검색</label>
+              <div class="search-wrap">
+                <input type="text" id="records-search-input" autocomplete="off" placeholder="환자명 입력">
+                <div id="records-search-results" class="search-results hidden"></div>
+              </div>
+            </div>
+            <div class="field">
+              <label for="records-date-filter">방문일 필터</label>
+              <input type="date" id="records-date-filter">
+            </div>
+          </div>
         </div>
-        <div class="pill" id="gallery-count-pill">0건</div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">방문 기록</div>
+              <div class="subtext">같은 방문 안에서 진료 전/후 사진을 자세별로 나란히 확인할 수 있습니다.</div>
+            </div>
+          </div>
+          <div id="records-empty" class="capture-preview-empty">조건에 맞는 방문 기록이 없습니다.</div>
+          <div class="record-list" id="record-list"></div>
+        </div>
       </div>
 
-      <div class="field" style="margin-bottom:12px">
-        <label for="gallery-subject-filter">대상 필터</label>
-        <select id="gallery-subject-filter"></select>
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">선택된 환자</div>
+              <div class="subtext">촬영 탭에서 선택한 환자와 같은 기준을 사용합니다.</div>
+            </div>
+          </div>
+          <div class="patient-summary hidden" id="records-patient-summary">
+            <h3 id="records-patient-name"></h3>
+            <p id="records-patient-note"></p>
+          </div>
+          <div id="records-no-patient" class="capture-preview-empty">환자를 선택하면 방문 기록이 여기에 표시됩니다.</div>
+        </div>
       </div>
-
-      <div id="gallery-empty" class="capture-preview-empty">아직 저장된 촬영 이력이 없습니다.<br>대상을 저장한 뒤 촬영을 진행해 주세요.</div>
-      <div id="gallery-grid" class="gallery-grid"></div>
     </div>
-  </div>
+  </section>
+
+  <section class="tab-panel" data-panel="rules">
+    <div class="layout">
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">추천 기준 관리</div>
+              <div class="subtext">오늘 어떤 부위를 중점적으로 볼지 정하는 기준 문구를 별도 화면에서 관리합니다.</div>
+            </div>
+            <div class="pill" id="guide-status-pill">기본 기준</div>
+          </div>
+
+          <div class="field">
+            <label for="guide-editor">추천 기준 원문</label>
+            <textarea id="guide-editor" class="mono"></textarea>
+          </div>
+
+          <div class="btn-row" style="margin-top:12px">
+            <button class="btn btn-primary btn-fill" id="btn-save-guide" type="button">추천 기준 저장</button>
+            <button class="btn btn-secondary" id="btn-reset-guide" type="button">기본 기준 복원</button>
+          </div>
+          <div class="btn-row" style="margin-top:8px">
+            <button class="btn btn-secondary btn-fill" id="btn-import-guide" type="button">기준 불러오기</button>
+            <button class="btn btn-secondary btn-fill" id="btn-export-guide" type="button">저장본 받기</button>
+          </div>
+          <input type="file" id="guide-file-input" class="hidden" accept=".txt,.json,.yaml,.yml">
+          <div class="message-box" id="guide-message" style="margin-top:12px">기본 추천 기준이 로드되어 있습니다.</div>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">운영 안내</div>
+              <div class="subtext">이 탭은 평소 촬영 화면과 분리되어 있습니다. 주 사용자는 촬영 탭과 환자 기록 탭만 써도 됩니다.</div>
+            </div>
+          </div>
+          <div class="message-box">
+            추천 기준은 내부적으로 구조화된 원문으로 저장됩니다. 평소에는 수정하지 않아도 되고, 필요할 때만 문구를 바꾸면 됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script type="module">
@@ -780,20 +1006,31 @@ const WASM_PATH = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/
 const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task";
 
 const STORAGE_KEYS = {
-  subjects: "bodyAnalysisSubjects",
+  patients: "bodyAnalysisPatients",
+  visits: "bodyAnalysisVisits",
   captures: "bodyAnalysisCaptures",
   guide: "bodyAnalysisGuideConfig",
-  selectedSubjectId: "bodyAnalysisSelectedSubjectId"
+  selectedPatientId: "bodyAnalysisSelectedPatientId"
 };
+
+const SLOT_ORDER = [
+  { phase: "before", angle: "front", label: "정면", phaseLabel: "진료 전" },
+  { phase: "before", angle: "side", label: "측면", phaseLabel: "진료 전" },
+  { phase: "before", angle: "back", label: "후면", phaseLabel: "진료 전" },
+  { phase: "after", angle: "front", label: "정면", phaseLabel: "진료 후" },
+  { phase: "after", angle: "side", label: "측면", phaseLabel: "진료 후" },
+  { phase: "after", angle: "back", label: "후면", phaseLabel: "진료 후" }
+];
+
+const ANGLE_LABELS = { front: "정면", side: "측면", back: "후면" };
+const PHASE_LABELS = { before: "진료 전", after: "진료 후" };
 
 const LM = {
   NOSE: 0,
   LEFT_SHOULDER: 11, RIGHT_SHOULDER: 12,
   LEFT_HIP: 23, RIGHT_HIP: 24,
   LEFT_KNEE: 25, RIGHT_KNEE: 26,
-  LEFT_ANKLE: 27, RIGHT_ANKLE: 28,
-  LEFT_HEEL: 29, RIGHT_HEEL: 30,
-  LEFT_FOOT_INDEX: 31, RIGHT_FOOT_INDEX: 32
+  LEFT_ANKLE: 27, RIGHT_ANKLE: 28
 };
 
 const DEFAULT_GUIDE_DATA = {
@@ -885,39 +1122,50 @@ const state = {
   animId: null,
   lastLandmarks: null,
   isRunning: false,
-  guideFormat: "yaml",
-  selectedSubjectId: null,
-  subjects: [],
-  captures: [],
+  patients: [],
+  visits: [],
   guideConfig: structuredClone(DEFAULT_GUIDE_DATA),
-  lastRenderedCaptureId: null
+  selectedPatientId: null,
+  activeTab: "capture",
+  activeSlotKey: "before-front",
+  currentVisitId: null,
+  lastViewedCapture: null
 };
 
 const el = {
+  tabButtons: [...document.querySelectorAll(".tab-btn")],
+  tabPanels: [...document.querySelectorAll(".tab-panel")],
+  patientSearchInput: document.getElementById("patient-search-input"),
+  patientSearchResults: document.getElementById("patient-search-results"),
+  recordsSearchInput: document.getElementById("records-search-input"),
+  recordsSearchResults: document.getElementById("records-search-results"),
+  patientNameInput: document.getElementById("patient-name-input"),
+  patientNoteInput: document.getElementById("patient-note-input"),
+  heightInput: document.getElementById("height-input"),
+  selectedPatientPill: document.getElementById("selected-patient-pill"),
+  patientSummary: document.getElementById("patient-summary"),
+  patientSummaryName: document.getElementById("patient-summary-name"),
+  patientSummaryNote: document.getElementById("patient-summary-note"),
+  patientVisitCount: document.getElementById("patient-visit-count"),
+  patientLastVisit: document.getElementById("patient-last-visit"),
+  todayProgress: document.getElementById("today-progress"),
+  btnSavePatient: document.getElementById("btn-save-patient"),
+  btnClearPatient: document.getElementById("btn-clear-patient"),
+  slotGrid: document.getElementById("slot-grid"),
+  activeSlotPill: document.getElementById("active-slot-pill"),
   video: document.getElementById("video"),
   overlayCanvas: document.getElementById("overlay-canvas"),
-  heightInput: document.getElementById("height-input"),
-  subjectSelect: document.getElementById("subject-select"),
-  subjectName: document.getElementById("subject-name"),
-  subjectNote: document.getElementById("subject-note"),
-  subjectPill: document.getElementById("subject-pill"),
-  gallerySubjectFilter: document.getElementById("gallery-subject-filter"),
-  galleryDateFilter: document.getElementById("gallery-date-filter"),
-  galleryCountPill: document.getElementById("gallery-count-pill"),
-  galleryEmpty: document.getElementById("gallery-empty"),
-  galleryGrid: document.getElementById("gallery-grid"),
-  btnSaveSubject: document.getElementById("btn-save-subject"),
-  btnNewSubject: document.getElementById("btn-new-subject"),
-  btnStart: document.getElementById("btn-start"),
-  btnStop: document.getElementById("btn-stop"),
-  btnCapture: document.getElementById("btn-capture"),
+  cameraStatus: document.getElementById("camera-status"),
+  poseBadge: document.getElementById("pose-badge"),
   loadingBar: document.getElementById("loading-bar"),
   statusMsg: document.getElementById("status-msg"),
   visibilityWarn: document.getElementById("visibility-warn"),
-  cameraStatus: document.getElementById("camera-status"),
-  poseBadge: document.getElementById("pose-badge"),
+  btnStart: document.getElementById("btn-start"),
+  btnStop: document.getElementById("btn-stop"),
+  btnCapture: document.getElementById("btn-capture"),
   resultsCard: document.getElementById("results-card"),
   captureTimestampPill: document.getElementById("capture-timestamp-pill"),
+  captureSlotPill: document.getElementById("capture-slot-pill"),
   capturePreview: document.getElementById("capture-preview"),
   resultsGrid: document.getElementById("results-grid"),
   ratioSection: document.getElementById("ratio-section"),
@@ -928,15 +1176,22 @@ const el = {
   recommendationTherapies: document.getElementById("recommendation-therapies"),
   recommendationTags: document.getElementById("recommendation-tags"),
   recommendationDisclaimer: document.getElementById("recommendation-disclaimer"),
-  guideFormat: document.getElementById("guide-format"),
+  recordsDateFilter: document.getElementById("records-date-filter"),
+  recordsCountPill: document.getElementById("records-count-pill"),
+  recordList: document.getElementById("record-list"),
+  recordsEmpty: document.getElementById("records-empty"),
+  recordsPatientSummary: document.getElementById("records-patient-summary"),
+  recordsPatientName: document.getElementById("records-patient-name"),
+  recordsPatientNote: document.getElementById("records-patient-note"),
+  recordsNoPatient: document.getElementById("records-no-patient"),
   guideEditor: document.getElementById("guide-editor"),
+  guideStatusPill: document.getElementById("guide-status-pill"),
+  guideMessage: document.getElementById("guide-message"),
   btnSaveGuide: document.getElementById("btn-save-guide"),
   btnResetGuide: document.getElementById("btn-reset-guide"),
   btnImportGuide: document.getElementById("btn-import-guide"),
   btnExportGuide: document.getElementById("btn-export-guide"),
-  guideFileInput: document.getElementById("guide-file-input"),
-  guideMessage: document.getElementById("guide-message"),
-  guideStatusPill: document.getElementById("guide-status-pill")
+  guideFileInput: document.getElementById("guide-file-input")
 };
 
 const ctx = el.overlayCanvas.getContext("2d");
@@ -959,126 +1214,88 @@ function loadStorage(key, fallback) {
   }
 }
 
+function slotKey(phase, angle) {
+  return `${phase}-${angle}`;
+}
+
+function emptySlotMap() {
+  return Object.fromEntries(SLOT_ORDER.map((slot) => [slotKey(slot.phase, slot.angle), null]));
+}
+
+function migrateLegacyCaptures(captures) {
+  if (!Array.isArray(captures) || captures.length === 0) return [];
+  return captures.map((capture, index) => {
+    const visitId = uid(`legacy-visit-${index}`);
+    const slots = emptySlotMap();
+    slots["before-front"] = {
+      id: capture.id,
+      phase: "before",
+      angle: "front",
+      capturedAt: capture.capturedAt,
+      imageData: capture.imageData,
+      metrics: capture.metrics,
+      recommendation: capture.recommendation
+    };
+    return {
+      id: visitId,
+      patientId: capture.subjectId,
+      patientName: capture.subjectName,
+      patientNote: capture.subjectNote || "",
+      dateKey: capture.dateKey || formatDateOnly(capture.capturedAt),
+      createdAt: capture.capturedAt,
+      updatedAt: capture.capturedAt,
+      slots
+    };
+  });
+}
+
 function loadState() {
-  state.subjects = loadStorage(STORAGE_KEYS.subjects, []);
-  state.captures = loadStorage(STORAGE_KEYS.captures, []);
-  state.selectedSubjectId = localStorage.getItem(STORAGE_KEYS.selectedSubjectId);
+  state.patients = loadStorage(STORAGE_KEYS.patients, loadStorage(STORAGE_KEYS.subjects, []));
+  state.patients = state.patients.map((patient) => ({
+    ...patient,
+    name: patient.name || patient.subjectName || "",
+    note: patient.note || "",
+    createdAt: patient.createdAt || new Date().toISOString(),
+    updatedAt: patient.updatedAt || patient.createdAt || new Date().toISOString()
+  }));
+
+  const savedVisits = loadStorage(STORAGE_KEYS.visits, null);
+  if (savedVisits) {
+    state.visits = savedVisits;
+  } else {
+    state.visits = migrateLegacyCaptures(loadStorage(STORAGE_KEYS.captures, []));
+    if (state.visits.length > 0) {
+      saveStorage(STORAGE_KEYS.visits, state.visits);
+    }
+  }
+
+  state.selectedPatientId = localStorage.getItem(STORAGE_KEYS.selectedPatientId);
   state.guideConfig = loadStorage(STORAGE_KEYS.guide, structuredClone(DEFAULT_GUIDE_DATA));
   if (!Array.isArray(state.guideConfig.rules)) {
     state.guideConfig = structuredClone(DEFAULT_GUIDE_DATA);
   }
 }
 
-function persistSubjects() {
-  saveStorage(STORAGE_KEYS.subjects, state.subjects);
+function persistPatients() {
+  saveStorage(STORAGE_KEYS.patients, state.patients);
+  saveStorage(STORAGE_KEYS.subjects, state.patients);
 }
 
-function persistCaptures() {
-  saveStorage(STORAGE_KEYS.captures, state.captures);
+function persistVisits() {
+  saveStorage(STORAGE_KEYS.visits, state.visits);
 }
 
 function persistGuide() {
   saveStorage(STORAGE_KEYS.guide, state.guideConfig);
 }
 
-function setSelectedSubject(subjectId) {
-  state.selectedSubjectId = subjectId || null;
-  if (subjectId) {
-    localStorage.setItem(STORAGE_KEYS.selectedSubjectId, subjectId);
-  } else {
-    localStorage.removeItem(STORAGE_KEYS.selectedSubjectId);
-  }
-  syncSelectedSubjectUI();
-}
-
-function syncSelectedSubjectUI() {
-  const current = state.subjects.find((subject) => subject.id === state.selectedSubjectId) || null;
-  el.subjectSelect.value = current ? current.id : "";
-  el.subjectPill.textContent = current ? `${current.name} 선택됨` : "선택된 대상 없음";
-  if (current) {
-    el.subjectName.value = current.name;
-    el.subjectNote.value = current.note || "";
-    el.heightInput.value = current.heightCm || "";
-  } else {
-    el.subjectName.value = "";
-    el.subjectNote.value = "";
-  }
-}
-
-function renderSubjectOptions() {
-  const baseOption = `<option value="">대상을 선택하거나 새로 저장</option>`;
-  const options = state.subjects
-    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-    .map((subject) => `<option value="${subject.id}">${escapeHtml(subject.name)}${subject.note ? ` · ${escapeHtml(subject.note)}` : ""}</option>`)
-    .join("");
-  el.subjectSelect.innerHTML = baseOption + options;
-
-  const galleryOptions = [`<option value="">전체 대상</option>`]
-    .concat(state.subjects.map((subject) => `<option value="${subject.id}">${escapeHtml(subject.name)}</option>`))
-    .join("");
-  el.gallerySubjectFilter.innerHTML = galleryOptions;
-  if (state.selectedSubjectId) {
-    el.gallerySubjectFilter.value = state.selectedSubjectId;
-  }
-  syncSelectedSubjectUI();
-}
-
-function upsertSubjectFromForm() {
-  const name = el.subjectName.value.trim();
-  const note = el.subjectNote.value.trim();
-  const heightCm = parseFloat(el.heightInput.value);
-  if (!name) {
-    setStatus("대상 이름을 입력한 뒤 저장해 주세요.");
-    return null;
-  }
-
-  const selected = state.subjects.find((subject) => subject.id === state.selectedSubjectId);
-  const nextSubject = selected
-    ? { ...selected, name, note, updatedAt: new Date().toISOString(), heightCm: Number.isFinite(heightCm) ? heightCm : selected.heightCm || null }
-    : {
-        id: uid("subject"),
-        name,
-        note,
-        heightCm: Number.isFinite(heightCm) ? heightCm : null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-  if (selected) {
-    state.subjects = state.subjects.map((subject) => subject.id === nextSubject.id ? nextSubject : subject);
-  } else {
-    state.subjects.push(nextSubject);
-  }
-
-  persistSubjects();
-  setSelectedSubject(nextSubject.id);
-  renderSubjectOptions();
-  renderGallery();
-  setStatus(`대상 "${nextSubject.name}" 정보가 저장되었습니다.`);
-  return nextSubject;
-}
-
-function ensureActiveSubject() {
-  if (state.selectedSubjectId) {
-    const existing = state.subjects.find((subject) => subject.id === state.selectedSubjectId);
-    if (existing) {
-      const heightCm = parseFloat(el.heightInput.value);
-      if (Number.isFinite(heightCm) && existing.heightCm !== heightCm) {
-        existing.heightCm = heightCm;
-        existing.updatedAt = new Date().toISOString();
-        persistSubjects();
-      }
-      return existing;
-    }
-  }
-  return upsertSubjectFromForm();
-}
-
-function resetSubjectForm() {
-  setSelectedSubject(null);
-  el.subjectSelect.value = "";
-  el.subjectName.value = "";
-  el.subjectNote.value = "";
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function setStatus(message) {
@@ -1087,6 +1304,217 @@ function setStatus(message) {
 
 function showLoading(enabled) {
   el.loadingBar.classList.toggle("active", enabled);
+}
+
+function formatDateTime(isoString) {
+  return new Date(isoString).toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function formatDateOnly(isoString) {
+  return new Date(isoString).toISOString().slice(0, 10);
+}
+
+function sortPatientsByName(list) {
+  return [...list].sort((a, b) => a.name.localeCompare(b.name, "ko"));
+}
+
+function getPatientById(patientId) {
+  return state.patients.find((patient) => patient.id === patientId) || null;
+}
+
+function getVisitsForPatient(patientId) {
+  return state.visits
+    .filter((visit) => visit.patientId === patientId)
+    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+}
+
+function getOrCreateTodayVisit(patient) {
+  const todayKey = formatDateOnly(new Date().toISOString());
+  let visit = state.visits.find((item) => item.patientId === patient.id && item.dateKey === todayKey);
+  if (!visit) {
+    visit = {
+      id: uid("visit"),
+      patientId: patient.id,
+      patientName: patient.name,
+      patientNote: patient.note || "",
+      dateKey: todayKey,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      slots: emptySlotMap()
+    };
+    state.visits.unshift(visit);
+    persistVisits();
+  }
+  state.currentVisitId = visit.id;
+  return visit;
+}
+
+function getCurrentVisit() {
+  const patient = getPatientById(state.selectedPatientId);
+  if (!patient) return null;
+  const todayKey = formatDateOnly(new Date().toISOString());
+  return state.visits.find((visit) => visit.patientId === patient.id && visit.dateKey === todayKey) || null;
+}
+
+function setSelectedPatient(patientId) {
+  state.selectedPatientId = patientId || null;
+  if (patientId) {
+    localStorage.setItem(STORAGE_KEYS.selectedPatientId, patientId);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.selectedPatientId);
+  }
+  state.currentVisitId = getCurrentVisit()?.id || null;
+  syncSelectedPatientUI();
+  renderSlotGrid();
+  renderRecordsTab();
+}
+
+function syncSelectedPatientUI() {
+  const patient = getPatientById(state.selectedPatientId);
+  if (!patient) {
+    el.selectedPatientPill.textContent = "환자 미선택";
+    el.patientSummary.classList.add("hidden");
+    el.recordsPatientSummary.classList.add("hidden");
+    el.recordsNoPatient.classList.remove("hidden");
+    el.patientSearchInput.value = "";
+    return;
+  }
+
+  el.selectedPatientPill.textContent = `${patient.name} 선택됨`;
+  el.patientSearchInput.value = patient.name;
+  el.recordsSearchInput.value = patient.name;
+  el.patientSummary.classList.remove("hidden");
+  el.patientSummaryName.textContent = patient.name;
+  el.patientSummaryNote.textContent = patient.note || "메모 없음";
+  el.recordsPatientSummary.classList.remove("hidden");
+  el.recordsPatientName.textContent = patient.name;
+  el.recordsPatientNote.textContent = patient.note || "메모 없음";
+  el.recordsNoPatient.classList.add("hidden");
+  if (patient.heightCm) {
+    el.heightInput.value = patient.heightCm;
+  }
+
+  const visits = getVisitsForPatient(patient.id);
+  el.patientVisitCount.textContent = String(visits.length);
+  el.patientLastVisit.textContent = visits[0] ? visits[0].dateKey : "-";
+  const todayVisit = getCurrentVisit();
+  const completed = todayVisit ? Object.values(todayVisit.slots).filter(Boolean).length : 0;
+  el.todayProgress.textContent = `${completed} / 6`;
+}
+
+function renderPatientSearchResults(target, query) {
+  const normalized = query.trim();
+  const list = sortPatientsByName(state.patients)
+    .filter((patient) => !normalized || patient.name.includes(normalized));
+
+  if (list.length === 0 || !normalized) {
+    target.innerHTML = "";
+    target.classList.add("hidden");
+    return;
+  }
+
+  target.innerHTML = list.map((patient) => `
+    <button class="search-item" type="button" data-patient-id="${patient.id}">
+      <strong>${escapeHtml(patient.name)}</strong>
+      <span>${escapeHtml(patient.note || "메모 없음")}</span>
+    </button>
+  `).join("");
+  target.classList.remove("hidden");
+}
+
+function hideSearchResults() {
+  el.patientSearchResults.classList.add("hidden");
+  el.recordsSearchResults.classList.add("hidden");
+}
+
+function saveNewPatient() {
+  const name = el.patientNameInput.value.trim();
+  const note = el.patientNoteInput.value.trim();
+  const heightCm = parseFloat(el.heightInput.value);
+  if (!name) {
+    setStatus("신규 환자 이름을 입력해 주세요.");
+    return null;
+  }
+
+  const existing = state.patients.find((patient) => patient.name === name);
+  if (existing) {
+    setSelectedPatient(existing.id);
+    setStatus(`이미 등록된 환자 "${name}" 을 선택했습니다.`);
+    return existing;
+  }
+
+  const patient = {
+    id: uid("patient"),
+    name,
+    note,
+    heightCm: Number.isFinite(heightCm) ? heightCm : null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  state.patients.push(patient);
+  persistPatients();
+  setSelectedPatient(patient.id);
+  clearPatientForm();
+  setStatus(`신규 환자 "${name}" 이 등록되었습니다.`);
+  return patient;
+}
+
+function clearPatientForm() {
+  el.patientNameInput.value = "";
+  el.patientNoteInput.value = "";
+}
+
+function ensureActivePatient() {
+  const selected = getPatientById(state.selectedPatientId);
+  if (selected) {
+    const heightCm = parseFloat(el.heightInput.value);
+    if (Number.isFinite(heightCm)) {
+      selected.heightCm = heightCm;
+      selected.updatedAt = new Date().toISOString();
+      persistPatients();
+    }
+    return selected;
+  }
+  return saveNewPatient();
+}
+
+function renderSlotGrid() {
+  const visit = getCurrentVisit();
+  el.slotGrid.innerHTML = SLOT_ORDER.map((slot) => {
+    const key = slotKey(slot.phase, slot.angle);
+    const capture = visit?.slots?.[key] || null;
+    const active = state.activeSlotKey === key ? "active" : "";
+    const done = capture ? "done" : "";
+    const status = capture ? `촬영 완료 · ${formatDateTime(capture.capturedAt)}` : "아직 촬영 전";
+    return `
+      <button class="slot-card ${active} ${done}" type="button" data-slot-key="${key}">
+        <div class="slot-phase">${slot.phaseLabel}</div>
+        <div class="slot-title">${slot.label}</div>
+        <div class="slot-status">${status}</div>
+      </button>
+    `;
+  }).join("");
+
+  const active = SLOT_ORDER.find((slot) => slotKey(slot.phase, slot.angle) === state.activeSlotKey);
+  el.activeSlotPill.textContent = `${active.phaseLabel} · ${active.label}`;
+  el.captureSlotPill.textContent = `${active.phaseLabel} · ${active.label}`;
+  syncSelectedPatientUI();
+}
+
+function setActiveSlot(key) {
+  state.activeSlotKey = key;
+  renderSlotGrid();
+  const visit = getCurrentVisit();
+  const capture = visit?.slots?.[key];
+  if (capture) {
+    renderCapture(capture, visit);
+  }
 }
 
 function setPoseBadge(cls, text) {
@@ -1112,10 +1540,7 @@ async function initModel() {
   try {
     const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
     state.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
-      baseOptions: {
-        modelAssetPath: MODEL_URL,
-        delegate: "GPU"
-      },
+      baseOptions: { modelAssetPath: MODEL_URL, delegate: "GPU" },
       runningMode: "VIDEO",
       numPoses: 1,
       minPoseDetectionConfidence: 0.5,
@@ -1131,24 +1556,16 @@ async function initModel() {
 }
 
 async function startCamera() {
-  if (!state.poseLandmarker) {
-    await initModel();
-  }
+  if (!state.poseLandmarker) await initModel();
   if (!state.poseLandmarker) return;
 
   try {
     state.stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        facingMode: "environment",
-        width: { ideal: 720 },
-        height: { ideal: 960 }
-      },
+      video: { facingMode: "environment", width: { ideal: 720 }, height: { ideal: 960 } },
       audio: false
     });
     el.video.srcObject = state.stream;
-    await new Promise((resolve) => {
-      el.video.onloadedmetadata = resolve;
-    });
+    await new Promise((resolve) => { el.video.onloadedmetadata = resolve; });
     await el.video.play();
     state.isRunning = true;
     el.cameraStatus.classList.add("hidden");
@@ -1159,20 +1576,14 @@ async function startCamera() {
     loop();
     setStatus("실시간 포즈 감지 중…");
   } catch (error) {
-    if (error.name === "NotAllowedError") {
-      setStatus("카메라 권한이 거부되었습니다. 브라우저 설정에서 허용해 주세요.");
-    } else {
-      setStatus(`카메라 오류: ${error.message}`);
-    }
+    setStatus(error.name === "NotAllowedError" ? "카메라 권한이 거부되었습니다. 브라우저 설정에서 허용해 주세요." : `카메라 오류: ${error.message}`);
   }
 }
 
 function stopCamera() {
   state.isRunning = false;
   if (state.animId) cancelAnimationFrame(state.animId);
-  if (state.stream) {
-    state.stream.getTracks().forEach((track) => track.stop());
-  }
+  if (state.stream) state.stream.getTracks().forEach((track) => track.stop());
   state.stream = null;
   el.video.srcObject = null;
   ctx.clearRect(0, 0, el.overlayCanvas.width, el.overlayCanvas.height);
@@ -1217,52 +1628,25 @@ function drawPose(landmarks) {
   ctx.clearRect(0, 0, el.overlayCanvas.width, el.overlayCanvas.height);
   const width = el.overlayCanvas.width;
   const height = el.overlayCanvas.height;
-  const connections = PoseLandmarker.POSE_CONNECTIONS;
-
-  ctx.strokeStyle = "rgba(92, 200, 255, 0.62)";
-  ctx.lineWidth = 2;
-  for (const [a, b] of connections) {
+  for (const [a, b] of PoseLandmarker.POSE_CONNECTIONS) {
     const lmA = landmarks[a];
     const lmB = landmarks[b];
     if (!lmA || !lmB || lmA.visibility < 0.3 || lmB.visibility < 0.3) continue;
     ctx.beginPath();
+    ctx.strokeStyle = "rgba(92, 200, 255, 0.62)";
+    ctx.lineWidth = 2;
     ctx.moveTo(lmA.x * width, lmA.y * height);
     ctx.lineTo(lmB.x * width, lmB.y * height);
     ctx.stroke();
   }
-
-  const keyIndices = Object.values(LM);
   for (let index = 0; index < landmarks.length; index += 1) {
-    const landmark = landmarks[index];
-    if (landmark.visibility < 0.3) continue;
-    const radius = keyIndices.includes(index) ? 5 : 3;
+    const lm = landmarks[index];
+    if (lm.visibility < 0.3) continue;
     ctx.beginPath();
-    ctx.arc(landmark.x * width, landmark.y * height, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = keyIndices.includes(index) ? "#7ef0c6" : "rgba(255, 255, 255, 0.34)";
+    ctx.arc(lm.x * width, lm.y * height, [11, 12, 23, 24, 27, 28].includes(index) ? 5 : 3, 0, 2 * Math.PI);
+    ctx.fillStyle = [11, 12, 23, 24, 27, 28].includes(index) ? "#7ef0c6" : "rgba(255, 255, 255, 0.34)";
     ctx.fill();
   }
-
-  drawMeasureLine(landmarks, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, "#fbbf24", "어깨");
-  drawMeasureLine(landmarks, LM.LEFT_HIP, LM.RIGHT_HIP, "#fb7185", "골반");
-}
-
-function drawMeasureLine(landmarks, idxA, idxB, color, label) {
-  const width = el.overlayCanvas.width;
-  const height = el.overlayCanvas.height;
-  const a = landmarks[idxA];
-  const b = landmarks[idxB];
-  if (!a || !b || a.visibility < 0.3 || b.visibility < 0.3) return;
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 2;
-  ctx.setLineDash([5, 4]);
-  ctx.beginPath();
-  ctx.moveTo(a.x * width, a.y * height);
-  ctx.lineTo(b.x * width, b.y * height);
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.fillStyle = color;
-  ctx.font = "bold 12px sans-serif";
-  ctx.fillText(label, ((a.x + b.x) / 2) * width + 4, ((a.y + b.y) / 2) * height - 4);
 }
 
 function updatePoseBadge(landmarks) {
@@ -1307,7 +1691,6 @@ function calculateMetrics(landmarks, heightCm) {
   const midHip = midpoint(lHip, rHip);
   const midAnkle = midpoint(lAnkle, rAnkle);
   const midKnee = midpoint(lKnee, rKnee);
-
   const shoulderWidthPx = pointDistance(lShoulder, rShoulder, width, height);
   const hipWidthPx = pointDistance(lHip, rHip, width, height);
   const upperBodyPx = pointDistance(midShoulder, midHip, width, height);
@@ -1329,12 +1712,7 @@ function calculateMetrics(landmarks, heightCm) {
     scaleCm,
     poseVisibilityScore,
     measurements: {
-      shoulderWidthPx,
-      hipWidthPx,
-      upperBodyPx,
-      lowerBodyPx,
-      thighPx,
-      shinPx,
+      shoulderWidthPx, hipWidthPx, upperBodyPx, lowerBodyPx, thighPx, shinPx,
       shoulderWidthCm: toCm(shoulderWidthPx),
       hipWidthCm: toCm(hipWidthPx),
       upperBodyCm: toCm(upperBodyPx),
@@ -1362,9 +1740,7 @@ function takeSnapshot() {
 }
 
 function metricFormat(cmValue, pxValue, bodyHeightPx) {
-  if (cmValue !== null && Number.isFinite(cmValue)) {
-    return `${cmValue}<span>cm</span>`;
-  }
+  if (cmValue !== null && Number.isFinite(cmValue)) return `${cmValue}<span>cm</span>`;
   return `${((pxValue / bodyHeightPx) * 100).toFixed(1)}<span>%</span>`;
 }
 
@@ -1372,26 +1748,19 @@ function ratioBar(label, value, min, max, minLabel, maxLabel, desc) {
   const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
   return `
     <div class="ratio-block">
-      <div class="ratio-meta">
-        <strong>${escapeHtml(label)}</strong>
-        <span>${value.toFixed(2)}</span>
-      </div>
+      <div class="ratio-meta"><strong>${escapeHtml(label)}</strong><span>${value.toFixed(2)}</span></div>
       <div class="ratio-bar-bg"><div class="ratio-bar-fill" style="width:${pct}%"></div></div>
       <div class="ratio-bar-label"><span>${minLabel}</span><span>${maxLabel}</span></div>
-      <div class="tip" style="margin-top:4px">${escapeHtml(desc)}</div>
+      <div class="subtext" style="margin-top:4px">${escapeHtml(desc)}</div>
     </div>
   `;
 }
 
 function evaluateThresholdSet(metrics, thresholds) {
   if (!thresholds) return true;
-  if (thresholds.any) {
-    return thresholds.any.some((child) => evaluateThresholdSet(metrics, child));
-  }
+  if (thresholds.any) return thresholds.any.some((child) => evaluateThresholdSet(metrics, child));
   return Object.entries(thresholds).every(([metricName, condition]) => {
-    const value = metricName in metrics.ratios
-      ? metrics.ratios[metricName]
-      : metrics[metricName];
+    const value = metricName in metrics.ratios ? metrics.ratios[metricName] : metrics[metricName];
     if (value === undefined || value === null) return false;
     if (condition.gt !== undefined && !(value > condition.gt)) return false;
     if (condition.gte !== undefined && !(value >= condition.gte)) return false;
@@ -1404,42 +1773,50 @@ function evaluateThresholdSet(metrics, thresholds) {
 function buildRecommendation(metrics) {
   const orderedRules = [...state.guideConfig.rules].sort((a, b) => (a.priority || 999) - (b.priority || 999));
   const matched = orderedRules.find((rule) => evaluateThresholdSet(metrics, rule.thresholds)) || orderedRules[0];
-  const scenarioText = `이 사람은 ${matched.situation} 오늘은 ${matched.recommendation.therapies[0]} 중심 접근이 추천됩니다.`;
   return {
     ruleId: matched.id,
     title: matched.title,
     summary: matched.summary,
-    scenarioText,
-    reason: matched.situation,
+    scenarioText: `이 환자는 ${matched.situation} 오늘은 ${matched.recommendation.therapies[0]} 중심 접근이 추천됩니다.`,
     therapies: matched.recommendation.therapies,
     tags: matched.recommendation.tags || [],
     disclaimer: state.guideConfig.disclaimer || DEFAULT_GUIDE_DATA.disclaimer
   };
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+function renderRecommendation(recommendation, phase) {
+  if (!recommendation) {
+    el.recommendationTitle.textContent = "가이드 준비 중";
+    el.recommendationSummary.textContent = "진료 전 촬영을 저장하면 오늘 우선적으로 볼 부분이 표시됩니다.";
+    el.recommendationReason.textContent = "진료 후 촬영은 기록 중심으로 저장됩니다.";
+    el.recommendationTherapies.innerHTML = "";
+    el.recommendationTags.innerHTML = "";
+    el.recommendationDisclaimer.textContent = "";
+    return;
+  }
+  el.recommendationTitle.textContent = phase === "after" ? "치료 후 기록 저장 완료" : recommendation.title;
+  el.recommendationSummary.textContent = phase === "after" ? "치료 후 상태를 기록으로 남겼습니다. 이전 촬영과 비교하여 변화를 확인하세요." : recommendation.summary;
+  el.recommendationReason.textContent = phase === "after" ? "치료 후 촬영은 비교 기록 용도입니다." : recommendation.scenarioText;
+  el.recommendationTherapies.innerHTML = recommendation.therapies.map((item) => `<span class="chip">${escapeHtml(item)}</span>`).join("");
+  el.recommendationTags.innerHTML = recommendation.tags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("");
+  el.recommendationDisclaimer.textContent = recommendation.disclaimer;
 }
 
-function renderCapture(capture) {
-  state.lastRenderedCaptureId = capture.id;
+function renderCapture(capture, visit) {
+  state.lastViewedCapture = { visitId: visit.id, slotKey: slotKey(capture.phase, capture.angle) };
   el.resultsCard.classList.remove("hidden");
-  el.captureTimestampPill.textContent = `${capture.subjectName} · ${formatDateTime(capture.capturedAt)}`;
+  el.captureTimestampPill.textContent = `${visit.patientName} · ${formatDateTime(capture.capturedAt)}`;
+  el.captureSlotPill.textContent = `${PHASE_LABELS[capture.phase]} · ${ANGLE_LABELS[capture.angle]}`;
   el.capturePreview.innerHTML = capture.imageData
-    ? `<img src="${capture.imageData}" alt="${escapeHtml(capture.subjectName)} 촬영 이미지">`
+    ? `<img src="${capture.imageData}" alt="${escapeHtml(visit.patientName)} 촬영 이미지">`
     : `<div class="capture-preview-empty">이미지 미리보기가 없습니다.</div>`;
 
   const metrics = capture.metrics;
   const measurements = metrics.measurements;
   el.resultsGrid.innerHTML = `
     <div class="result-item highlight">
-      <div class="result-label">등록 대상 / 기준 키</div>
-      <div class="result-value">${escapeHtml(capture.subjectName)}<span>${metrics.heightCm ? `${metrics.heightCm}cm` : "비율 모드"}</span></div>
+      <div class="result-label">환자 / 촬영 구분</div>
+      <div class="result-value">${escapeHtml(visit.patientName)}<span>${PHASE_LABELS[capture.phase]} · ${ANGLE_LABELS[capture.angle]}</span></div>
     </div>
     <div class="result-item">
       <div class="result-label">어깨 너비</div>
@@ -1472,110 +1849,158 @@ function renderCapture(capture) {
     ratioBar("다리-키 비율", metrics.ratios.legHeightRatio, 0.4, 0.6, "40%", "60%", `하체가 전체 키 대비 ${(metrics.ratios.legHeightRatio * 100).toFixed(1)}%를 차지합니다.`)
   ].join("");
 
-  const noteParts = [];
-  if (metrics.scaleCm) {
-    noteParts.push(`키 ${metrics.heightCm}cm 기준 환산 (1px ≈ ${metrics.scaleCm.toFixed(3)}cm)`);
-  } else {
-    noteParts.push("키 미입력 상태로 비율만 표시합니다.");
+  const notes = [];
+  if (metrics.scaleCm) notes.push(`키 ${metrics.heightCm}cm 기준 환산 (1px ≈ ${metrics.scaleCm.toFixed(3)}cm)`);
+  else notes.push("키 미입력 상태로 비율만 표시합니다.");
+  if (metrics.poseVisibilityScore < 0.75) notes.push("일부 키포인트 신뢰도가 낮아 재촬영이 권장됩니다.");
+  el.calibrationNote.textContent = notes.join(" ");
+  renderRecommendation(capture.recommendation, capture.phase);
+}
+
+function captureCurrentSlot() {
+  if (!state.lastLandmarks) {
+    setStatus("포즈가 감지되지 않았습니다. 전신이 보이도록 조정해 주세요.");
+    return;
   }
-  if (metrics.poseVisibilityScore < 0.75) {
-    noteParts.push("일부 키포인트 신뢰도가 낮아 재촬영이 권장됩니다.");
+
+  const patient = ensureActivePatient();
+  if (!patient) return;
+
+  const visit = getOrCreateTodayVisit(patient);
+  const [phase, angle] = state.activeSlotKey.split("-");
+  const heightCm = parseFloat(el.heightInput.value || patient.heightCm || "");
+  const metrics = calculateMetrics(state.lastLandmarks, heightCm);
+  const recommendation = buildRecommendation(metrics);
+  const capture = {
+    id: uid("capture"),
+    phase,
+    angle,
+    capturedAt: new Date().toISOString(),
+    imageData: takeSnapshot(),
+    metrics,
+    recommendation
+  };
+
+  visit.patientName = patient.name;
+  visit.patientNote = patient.note || "";
+  visit.updatedAt = capture.capturedAt;
+  visit.slots[state.activeSlotKey] = capture;
+  persistVisits();
+
+  renderSlotGrid();
+  renderCapture(capture, visit);
+  renderRecordsTab();
+  const nextSlot = SLOT_ORDER.find((slot) => !visit.slots[slotKey(slot.phase, slot.angle)]);
+  if (nextSlot) {
+    state.activeSlotKey = slotKey(nextSlot.phase, nextSlot.angle);
   }
-  el.calibrationNote.textContent = noteParts.join(" ");
-
-  renderRecommendation(capture.recommendation);
-  el.resultsCard.scrollIntoView({ behavior: "smooth", block: "start" });
+  renderSlotGrid();
+  setStatus(`${patient.name} · ${PHASE_LABELS[phase]} ${ANGLE_LABELS[angle]} 촬영이 저장되었습니다.`);
 }
 
-function renderRecommendation(recommendation) {
-  el.recommendationTitle.textContent = recommendation.title;
-  el.recommendationSummary.textContent = recommendation.summary;
-  el.recommendationReason.textContent = recommendation.scenarioText;
-  el.recommendationTherapies.innerHTML = recommendation.therapies
-    .map((therapy) => `<span class="summary-chip">${escapeHtml(therapy)}</span>`)
-    .join("");
-  el.recommendationTags.innerHTML = recommendation.tags
-    .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
-    .join("");
-  el.recommendationDisclaimer.textContent = recommendation.disclaimer;
+function renderRecordsTab() {
+  const patient = getPatientById(state.selectedPatientId);
+  const dateFilter = el.recordsDateFilter.value;
+  const visits = patient
+    ? getVisitsForPatient(patient.id).filter((visit) => !dateFilter || visit.dateKey === dateFilter)
+    : [];
+
+  el.recordsCountPill.textContent = `${visits.length}건`;
+  el.recordsEmpty.classList.toggle("hidden", visits.length > 0);
+  el.recordList.innerHTML = visits.map((visit) => renderVisitCard(visit)).join("");
 }
 
-function formatDateTime(isoString) {
-  return new Date(isoString).toLocaleString("ko-KR", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+function renderVisitCard(visit) {
+  return `
+    <div class="record-card">
+      <h3>${escapeHtml(visit.patientName)}</h3>
+      <div class="record-meta">${escapeHtml(visit.dateKey)} · 업데이트 ${escapeHtml(formatDateTime(visit.updatedAt))}</div>
+      <div class="compare-grid">
+        ${["front", "side", "back"].map((angle) => renderAngleCompare(visit, angle)).join("")}
+      </div>
+      <div class="record-actions">
+        <button class="btn btn-danger" type="button" data-action="delete-visit" data-visit-id="${visit.id}">이 방문 기록 삭제</button>
+      </div>
+    </div>
+  `;
 }
 
-function formatDateOnly(isoString) {
-  return new Date(isoString).toISOString().slice(0, 10);
-}
-
-function renderGallery() {
-  const subjectId = el.gallerySubjectFilter.value;
-  const dateFilter = el.galleryDateFilter.value;
-  const filtered = state.captures
-    .filter((capture) => !subjectId || capture.subjectId === subjectId)
-    .filter((capture) => !dateFilter || capture.dateKey === dateFilter)
-    .sort((a, b) => new Date(b.capturedAt) - new Date(a.capturedAt));
-
-  el.galleryCountPill.textContent = `${filtered.length}건`;
-  el.galleryEmpty.classList.toggle("hidden", filtered.length > 0);
-  el.galleryGrid.innerHTML = filtered.map((capture) => `
-    <div class="gallery-item">
-      <img src="${capture.imageData}" alt="${escapeHtml(capture.subjectName)} ${escapeHtml(capture.dateKey)} 촬영">
-      <div class="gallery-body">
-        <div class="gallery-title">${escapeHtml(capture.subjectName)}</div>
-        <div class="gallery-meta">${escapeHtml(formatDateTime(capture.capturedAt))}<br>${escapeHtml(capture.recommendation.title)}</div>
-        <div class="gallery-summary">
-          <span class="summary-chip">어깨/골반 ${capture.metrics.ratios.shoulderHipRatio.toFixed(2)}</span>
-          <span class="summary-chip">다리/키 ${(capture.metrics.ratios.legHeightRatio * 100).toFixed(1)}%</span>
+function renderAngleCompare(visit, angle) {
+  const beforeCapture = visit.slots[slotKey("before", angle)];
+  const afterCapture = visit.slots[slotKey("after", angle)];
+  return `
+    <div class="compare-card">
+      <h4>${ANGLE_LABELS[angle]}</h4>
+      <div class="compare-pair">
+        <div>
+          <div class="compare-caption">진료 전</div>
+          ${renderCompareImage(beforeCapture)}
         </div>
-        <div class="gallery-actions">
-          <button class="btn btn-secondary" type="button" data-action="view" data-capture-id="${capture.id}">상세 보기</button>
-          <button class="btn btn-danger" type="button" data-action="delete" data-capture-id="${capture.id}">삭제</button>
+        <div>
+          <div class="compare-caption">진료 후</div>
+          ${renderCompareImage(afterCapture)}
         </div>
       </div>
     </div>
-  `).join("");
+  `;
 }
 
-function parseGuideText(text, format) {
-  if (format === "json") {
+function renderCompareImage(capture) {
+  if (!capture) {
+    return `<div class="capture-preview-empty" style="min-height:160px">아직 촬영 전</div>`;
+  }
+  return `<div class="compare-image"><img src="${capture.imageData}" alt="촬영 이미지"></div>`;
+}
+
+function handleRecordActions(event) {
+  const button = event.target.closest("button[data-action='delete-visit']");
+  if (!button) return;
+  const visitId = button.dataset.visitId;
+  state.visits = state.visits.filter((visit) => visit.id !== visitId);
+  persistVisits();
+  if (state.currentVisitId === visitId) state.currentVisitId = null;
+  renderRecordsTab();
+  renderSlotGrid();
+  if (state.lastViewedCapture?.visitId === visitId) {
+    state.lastViewedCapture = null;
+    el.resultsCard.classList.add("hidden");
+  }
+  setStatus("방문 기록이 삭제되었습니다.");
+}
+
+function switchTab(tab) {
+  state.activeTab = tab;
+  el.tabButtons.forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
+  el.tabPanels.forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === tab));
+}
+
+function parseGuideText(text) {
+  try {
     return JSON.parse(text);
+  } catch {
+    return parseYaml(text);
   }
-  return parseYaml(text);
 }
 
-function serializeGuide(data, format) {
-  if (format === "json") {
-    return JSON.stringify(data, null, 2);
-  }
+function serializeGuide(data) {
   return dumpYaml(data, { lineWidth: 100, noRefs: true });
 }
 
-function renderGuideEditor() {
-  el.guideEditor.value = serializeGuide(state.guideConfig, state.guideFormat);
-  const isDefault = JSON.stringify(state.guideConfig) === JSON.stringify(DEFAULT_GUIDE_DATA);
-  el.guideStatusPill.textContent = isDefault ? "기본 데이터" : "사용자 수정 데이터";
+function validateGuideConfig(config) {
+  if (!config || !Array.isArray(config.rules) || config.rules.length === 0) {
+    throw new Error("추천 기준 목록이 필요합니다.");
+  }
+  config.rules.forEach((rule, index) => {
+    if (!rule.id || !rule.title || !rule.summary || !rule.recommendation?.therapies?.length) {
+      throw new Error(`기준 ${index + 1}번에 제목, 요약, 추천 항목이 빠져 있습니다.`);
+    }
+  });
 }
 
-function refreshRecommendationsFromGuide() {
-  state.captures = state.captures.map((capture) => ({
-    ...capture,
-    recommendation: buildRecommendation(capture.metrics)
-  }));
-  persistCaptures();
-  renderGallery();
-  if (state.lastRenderedCaptureId) {
-    const current = state.captures.find((capture) => capture.id === state.lastRenderedCaptureId);
-    if (current) {
-      renderCapture(current);
-    }
-  }
+function renderGuideEditor() {
+  el.guideEditor.value = serializeGuide(state.guideConfig);
+  const isDefault = JSON.stringify(state.guideConfig) === JSON.stringify(DEFAULT_GUIDE_DATA);
+  el.guideStatusPill.textContent = isDefault ? "기본 기준" : "수정된 기준";
 }
 
 function showGuideMessage(message, isError = false) {
@@ -1585,29 +2010,35 @@ function showGuideMessage(message, isError = false) {
   el.guideMessage.style.color = isError ? "#ffd2db" : "#d8f2ff";
 }
 
-function validateGuideConfig(config) {
-  if (!config || !Array.isArray(config.rules) || config.rules.length === 0) {
-    throw new Error("rules 배열이 필요합니다.");
+function refreshRecommendationsFromGuide() {
+  state.visits = state.visits.map((visit) => ({
+    ...visit,
+    slots: Object.fromEntries(Object.entries(visit.slots).map(([key, capture]) => [
+      key,
+      capture ? { ...capture, recommendation: buildRecommendation(capture.metrics) } : null
+    ]))
+  }));
+  persistVisits();
+  renderRecordsTab();
+  if (state.lastViewedCapture) {
+    const viewedVisit = state.visits.find((visit) => visit.id === state.lastViewedCapture.visitId);
+    const currentCapture = viewedVisit?.slots?.[state.lastViewedCapture.slotKey];
+    if (viewedVisit && currentCapture) renderCapture(currentCapture, viewedVisit);
   }
-  config.rules.forEach((rule, index) => {
-    if (!rule.id || !rule.title || !rule.summary || !rule.recommendation?.therapies?.length) {
-      throw new Error(`rules[${index}] 항목에 id/title/summary/recommendation.therapies 가 필요합니다.`);
-    }
-  });
 }
 
 function saveGuideFromEditor() {
   try {
-    const parsed = parseGuideText(el.guideEditor.value, state.guideFormat);
+    const parsed = parseGuideText(el.guideEditor.value);
     validateGuideConfig(parsed);
     state.guideConfig = parsed;
     persistGuide();
     renderGuideEditor();
     refreshRecommendationsFromGuide();
-    showGuideMessage("가이드 데이터가 저장되었습니다.");
+    showGuideMessage("추천 기준이 저장되었습니다.");
   } catch (error) {
     console.error(error);
-    showGuideMessage(`가이드 저장 실패: ${error.message}`, true);
+    showGuideMessage(`저장 실패: ${error.message}`, true);
   }
 }
 
@@ -1621,108 +2052,65 @@ function downloadText(filename, content) {
   URL.revokeObjectURL(url);
 }
 
-function handleGalleryClick(event) {
-  const button = event.target.closest("button[data-action]");
-  if (!button) return;
-  const captureId = button.dataset.captureId;
-  const action = button.dataset.action;
-  const capture = state.captures.find((item) => item.id === captureId);
-  if (!capture) return;
-
-  if (action === "view") {
-    renderCapture(capture);
-  }
-
-  if (action === "delete") {
-    state.captures = state.captures.filter((item) => item.id !== captureId);
-    persistCaptures();
-    if (state.lastRenderedCaptureId === captureId) {
-      state.lastRenderedCaptureId = null;
-      el.resultsCard.classList.add("hidden");
-    }
-    renderGallery();
-    setStatus("촬영 이력이 삭제되었습니다.");
-  }
-}
-
-function captureAndAnalyze() {
-  if (!state.lastLandmarks) {
-    setStatus("포즈가 감지되지 않았습니다. 전신이 보이도록 조정해 주세요.");
-    return;
-  }
-
-  const activeSubject = ensureActiveSubject();
-  if (!activeSubject) return;
-
-  const heightCm = parseFloat(el.heightInput.value || activeSubject.heightCm || "");
-  const metrics = calculateMetrics(state.lastLandmarks, heightCm);
-  const recommendation = buildRecommendation(metrics);
-  const capturedAt = new Date().toISOString();
-  const capture = {
-    id: uid("capture"),
-    subjectId: activeSubject.id,
-    subjectName: activeSubject.name,
-    subjectNote: activeSubject.note || "",
-    capturedAt,
-    dateKey: formatDateOnly(capturedAt),
-    imageData: takeSnapshot(),
-    metrics,
-    recommendation
-  };
-
-  state.captures.unshift(capture);
-  persistCaptures();
-  renderCapture(capture);
-  renderGallery();
-  el.gallerySubjectFilter.value = activeSubject.id;
-  setStatus(`"${activeSubject.name}" 촬영 결과가 저장되었습니다.`);
-}
-
 function bindEvents() {
-  el.btnSaveSubject.addEventListener("click", upsertSubjectFromForm);
-  el.btnNewSubject.addEventListener("click", resetSubjectForm);
-  el.subjectSelect.addEventListener("change", (event) => setSelectedSubject(event.target.value));
-  el.gallerySubjectFilter.addEventListener("change", renderGallery);
-  el.galleryDateFilter.addEventListener("change", renderGallery);
+  el.tabButtons.forEach((button) => {
+    button.addEventListener("click", () => switchTab(button.dataset.tab));
+  });
+
+  el.patientSearchInput.addEventListener("input", (event) => renderPatientSearchResults(el.patientSearchResults, event.target.value));
+  el.recordsSearchInput.addEventListener("input", (event) => renderPatientSearchResults(el.recordsSearchResults, event.target.value));
+  el.patientSearchResults.addEventListener("click", (event) => {
+    const button = event.target.closest(".search-item");
+    if (!button) return;
+    setSelectedPatient(button.dataset.patientId);
+    hideSearchResults();
+  });
+  el.recordsSearchResults.addEventListener("click", (event) => {
+    const button = event.target.closest(".search-item");
+    if (!button) return;
+    setSelectedPatient(button.dataset.patientId);
+    hideSearchResults();
+  });
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest(".search-wrap")) hideSearchResults();
+  });
+
+  el.btnSavePatient.addEventListener("click", saveNewPatient);
+  el.btnClearPatient.addEventListener("click", clearPatientForm);
+  el.slotGrid.addEventListener("click", (event) => {
+    const button = event.target.closest(".slot-card");
+    if (!button) return;
+    setActiveSlot(button.dataset.slotKey);
+  });
   el.btnStart.addEventListener("click", startCamera);
   el.btnStop.addEventListener("click", stopCamera);
-  el.btnCapture.addEventListener("click", captureAndAnalyze);
-  el.galleryGrid.addEventListener("click", handleGalleryClick);
+  el.btnCapture.addEventListener("click", captureCurrentSlot);
+  el.recordsDateFilter.addEventListener("change", renderRecordsTab);
+  el.recordList.addEventListener("click", handleRecordActions);
 
-  el.guideFormat.addEventListener("change", (event) => {
-    state.guideFormat = event.target.value;
-    renderGuideEditor();
-  });
   el.btnSaveGuide.addEventListener("click", saveGuideFromEditor);
   el.btnResetGuide.addEventListener("click", () => {
     state.guideConfig = structuredClone(DEFAULT_GUIDE_DATA);
     persistGuide();
     renderGuideEditor();
     refreshRecommendationsFromGuide();
-    showGuideMessage("기본 도수치료 가이드로 복원되었습니다.");
+    showGuideMessage("기본 추천 기준으로 복원되었습니다.");
   });
   el.btnImportGuide.addEventListener("click", () => el.guideFileInput.click());
-  el.btnExportGuide.addEventListener("click", () => {
-    const ext = state.guideFormat === "json" ? "json" : "yaml";
-    downloadText(`body-analysis-guide.${ext}`, serializeGuide(state.guideConfig, state.guideFormat));
-  });
+  el.btnExportGuide.addEventListener("click", () => downloadText("body-analysis-rules.txt", serializeGuide(state.guideConfig)));
   el.guideFileInput.addEventListener("change", async (event) => {
     const [file] = event.target.files || [];
     if (!file) return;
-    const text = await file.text();
-    const ext = file.name.endsWith(".json") ? "json" : "yaml";
     try {
-      const parsed = parseGuideText(text, ext);
+      const parsed = parseGuideText(await file.text());
       validateGuideConfig(parsed);
       state.guideConfig = parsed;
       persistGuide();
-      state.guideFormat = ext;
-      el.guideFormat.value = ext;
       renderGuideEditor();
       refreshRecommendationsFromGuide();
-      showGuideMessage(`"${file.name}" 파일을 불러왔습니다.`);
+      showGuideMessage(`"${file.name}" 기준을 불러왔습니다.`);
     } catch (error) {
-      showGuideMessage(`파일 불러오기 실패: ${error.message}`, true);
+      showGuideMessage(`불러오기 실패: ${error.message}`, true);
     } finally {
       event.target.value = "";
     }
@@ -1730,13 +2118,16 @@ function bindEvents() {
 }
 
 function initUi() {
-  renderSubjectOptions();
-  renderGallery();
+  renderSlotGrid();
   renderGuideEditor();
-  if (state.captures.length > 0) {
-    renderCapture(state.captures[0]);
+  renderRecordsTab();
+  syncSelectedPatientUI();
+  const visit = getCurrentVisit();
+  if (visit) {
+    const currentCapture = visit.slots[state.activeSlotKey];
+    if (currentCapture) renderCapture(currentCapture, visit);
   } else {
-    el.capturePreview.innerHTML = `<div class="capture-preview-empty">촬영 후 이 영역에 이미지와 추천 가이드가 함께 표시됩니다.</div>`;
+    el.capturePreview.innerHTML = `<div class="capture-preview-empty">촬영 결과가 저장되면 이 영역에서 즉시 확인할 수 있습니다.</div>`;
   }
 }
 
