@@ -5,11 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>체형 분석 PoC</title>
 <style>
+  :root {
+    --bg: #0b1117;
+    --panel: #111a22;
+    --panel-strong: #172433;
+    --line: #223446;
+    --text: #ecf3f9;
+    --muted: #92a5b8;
+    --accent: #5cc8ff;
+    --accent-2: #7ef0c6;
+    --warn: #fbbf24;
+    --danger: #fb7185;
+    --good: #4ade80;
+    --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #0f0f0f;
-    color: #f0f0f0;
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at top, rgba(92, 200, 255, 0.14), transparent 30%),
+      linear-gradient(180deg, #071018 0%, var(--bg) 100%);
+    color: var(--text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -18,266 +36,576 @@
 
   header {
     width: 100%;
-    max-width: 480px;
-    padding: 16px;
-    background: #1a1a1a;
-    border-bottom: 1px solid #2a2a2a;
+    max-width: 1100px;
+    padding: 28px 20px 16px;
   }
-  header h1 { font-size: 18px; font-weight: 700; }
-  header p { font-size: 12px; color: #888; margin-top: 2px; }
+
+  header h1 {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  header p {
+    margin-top: 8px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
 
   .container {
     width: 100%;
-    max-width: 480px;
-    padding: 16px;
+    max-width: 1100px;
+    padding: 0 20px 32px;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .stack {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
   }
 
   .card {
-    background: #1a1a1a;
-    border-radius: 12px;
-    padding: 16px;
-    border: 1px solid #2a2a2a;
-  }
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
+    background: linear-gradient(180deg, rgba(23, 36, 51, 0.92), rgba(17, 26, 34, 0.96));
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
   }
 
-  /* Height input */
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .card-header-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(92, 200, 255, 0.25);
+    background: rgba(92, 200, 255, 0.08);
+    color: #d8f3ff;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .field label {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: rgba(11, 17, 23, 0.72);
+    color: var(--text);
+    border: 1px solid #294156;
+    border-radius: 12px;
+    padding: 12px 14px;
+    outline: none;
+    font: inherit;
+  }
+
+  .field textarea {
+    min-height: 108px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(92, 200, 255, 0.15);
+  }
+
   .height-row {
     display: flex;
     align-items: center;
     gap: 8px;
   }
+
   .height-row input {
     flex: 1;
-    background: #2a2a2a;
-    border: 1px solid #3a3a3a;
-    border-radius: 8px;
-    color: #f0f0f0;
-    font-size: 24px;
-    font-weight: 700;
-    padding: 10px 14px;
     text-align: center;
-    outline: none;
-  }
-  .height-row input:focus { border-color: #4f9eff; }
-  .height-row .unit {
-    font-size: 18px;
-    color: #666;
-    font-weight: 600;
-    min-width: 30px;
+    font-size: 24px;
+    font-weight: 800;
   }
 
-  /* Camera view */
+  .height-row .unit {
+    min-width: 34px;
+    font-size: 18px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
   #camera-wrapper {
     position: relative;
     width: 100%;
-    aspect-ratio: 3/4;
-    background: #000;
-    border-radius: 12px;
+    aspect-ratio: 3 / 4;
+    background: #02070c;
+    border-radius: 18px;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
   }
-  #video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    /* no mirror for rear camera */
-  }
+
+  #video,
   #overlay-canvas {
     position: absolute;
-    top: 0; left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
+  }
+
+  #video {
+    object-fit: cover;
+    display: block;
+  }
+
+  #overlay-canvas {
     pointer-events: none;
   }
+
   #camera-status {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    color: #888;
-    font-size: 14px;
-    pointer-events: none;
+    padding: 24px;
+    color: var(--muted);
+    background: linear-gradient(180deg, rgba(2, 7, 12, 0.32), rgba(2, 7, 12, 0.58));
   }
-  #camera-status .icon { font-size: 40px; margin-bottom: 8px; }
 
-  /* Pose quality indicator */
+  #camera-status .icon {
+    font-size: 44px;
+    margin-bottom: 10px;
+  }
+
   #pose-badge {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background: rgba(0,0,0,0.7);
-    border-radius: 20px;
-    padding: 4px 10px;
+    top: 14px;
+    left: 14px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(3, 10, 16, 0.84);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     display: none;
+    border: 1px solid transparent;
   }
-  #pose-badge.good { color: #4ade80; border: 1px solid #4ade80; }
-  #pose-badge.partial { color: #fbbf24; border: 1px solid #fbbf24; }
-  #pose-badge.bad { color: #f87171; border: 1px solid #f87171; }
 
-  /* Guide overlay */
   #guide-overlay {
     position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
   }
+
   .body-guide {
     width: 38%;
     height: 80%;
-    border: 2px dashed rgba(79, 158, 255, 0.4);
+    border: 2px dashed rgba(92, 200, 255, 0.45);
     border-radius: 40% 40% 30% 30% / 20% 20% 10% 10%;
     position: relative;
+    box-shadow: 0 0 0 999px rgba(2, 7, 12, 0.22);
   }
 
-  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
   .btn {
-    width: 100%;
-    padding: 14px;
+    padding: 13px 14px;
     border: none;
-    border-radius: 10px;
-    font-size: 16px;
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
+    transition: transform 0.14s ease, opacity 0.14s ease, border-color 0.14s ease;
   }
-  .btn:active { transform: scale(0.97); opacity: 0.85; }
-  .btn-primary { background: #4f9eff; color: #fff; }
-  .btn-primary:disabled { background: #2a3a4a; color: #4a6a8a; cursor: not-allowed; }
-  .btn-danger { background: #2a2a2a; color: #f87171; border: 1px solid #3a2a2a; }
-  .btn-capture { background: #22c55e; color: #fff; }
-  .btn-capture:disabled { background: #1a2a1a; color: #3a6a3a; cursor: not-allowed; }
 
-  .btn-row { display: flex; gap: 8px; }
-  .btn-row .btn { flex: 1; }
+  .btn:active {
+    transform: scale(0.98);
+    opacity: 0.92;
+  }
 
-  /* Tip */
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #338dff);
+    color: #03101a;
+  }
+
+  .btn-secondary {
+    background: rgba(92, 200, 255, 0.08);
+    color: #dff5ff;
+    border: 1px solid rgba(92, 200, 255, 0.18);
+  }
+
+  .btn-danger {
+    background: rgba(251, 113, 133, 0.12);
+    color: #ffd2db;
+    border: 1px solid rgba(251, 113, 133, 0.28);
+  }
+
+  .btn-capture {
+    background: linear-gradient(135deg, #7ef0c6, #2dcc8e);
+    color: #042114;
+  }
+
+  .btn:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-fill { flex: 1; }
+
   .tip {
     font-size: 12px;
-    color: #666;
-    text-align: center;
     line-height: 1.6;
-    margin-top: 8px;
+    color: var(--muted);
   }
 
-  /* Results */
-  .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .result-item {
-    background: #222;
-    border-radius: 10px;
-    padding: 12px;
-    border: 1px solid #2a2a2a;
-  }
-  .result-item.highlight {
-    grid-column: 1 / -1;
-    border-color: #4f9eff44;
-    background: #1a2a3a;
-  }
-  .result-label {
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 4px;
-  }
-  .result-value {
-    font-size: 22px;
-    font-weight: 700;
-    color: #f0f0f0;
-  }
-  .result-value.good { color: #4ade80; }
-  .result-value span { font-size: 13px; font-weight: 400; color: #888; }
-
-  .ratio-bar-wrap { margin-top: 8px; }
-  .ratio-bar-bg {
-    height: 6px;
-    background: #2a2a2a;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .ratio-bar-fill {
-    height: 100%;
-    background: #4f9eff;
-    border-radius: 3px;
-    transition: width 0.5s ease;
-  }
-  .ratio-bar-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: #555;
-    margin-top: 3px;
-  }
-
-  /* Status / loading */
   #loading-bar {
     width: 100%;
-    height: 3px;
-    background: #2a2a2a;
-    border-radius: 2px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
     overflow: hidden;
     display: none;
   }
+
   #loading-bar.active { display: block; }
+
   #loading-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4f9eff, #22c55e);
-    border-radius: 2px;
-    animation: loading 1.2s ease-in-out infinite;
     width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    animation: loading 1.2s ease-in-out infinite;
   }
+
   @keyframes loading {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(300%); }
   }
 
   #status-msg {
-    font-size: 12px;
-    color: #666;
-    text-align: center;
     min-height: 18px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
   }
 
-  .divider {
-    height: 1px;
-    background: #2a2a2a;
-    margin: 12px 0;
+  #visibility-warn,
+  .message-box {
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  #visibility-warn {
+    display: none;
+    background: rgba(251, 191, 36, 0.1);
+    color: #ffd66d;
+    border: 1px solid rgba(251, 191, 36, 0.28);
+  }
+
+  .message-box {
+    background: rgba(92, 200, 255, 0.08);
+    border: 1px solid rgba(92, 200, 255, 0.18);
+    color: #d8f2ff;
+  }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .result-item {
+    background: rgba(8, 14, 20, 0.54);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 12px;
+  }
+
+  .result-item.highlight {
+    grid-column: 1 / -1;
+    background: rgba(92, 200, 255, 0.09);
+    border-color: rgba(92, 200, 255, 0.28);
+  }
+
+  .result-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .result-value {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  .result-value span {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-left: 2px;
   }
 
   .section-title {
+    margin: 14px 0 8px;
     font-size: 11px;
-    font-weight: 600;
-    color: #555;
+    font-weight: 700;
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 8px;
+    letter-spacing: 0.08em;
   }
 
-  /* Visibility warning */
-  #visibility-warn {
-    background: #2a1a00;
-    border: 1px solid #6a3a00;
-    border-radius: 8px;
-    padding: 10px 14px;
+  .ratio-block {
+    margin-bottom: 14px;
+  }
+
+  .ratio-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .ratio-meta strong { color: #daf5ff; }
+
+  .ratio-bar-bg {
+    height: 7px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .ratio-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  }
+
+  .ratio-bar-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .capture-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .capture-preview {
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    min-height: 220px;
+  }
+
+  .capture-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .capture-preview-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .recommendation-box {
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(126, 240, 198, 0.08), rgba(92, 200, 255, 0.08));
+    border: 1px solid rgba(126, 240, 198, 0.2);
+    padding: 16px;
+  }
+
+  .recommendation-box h3 {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .recommendation-box p {
+    color: #d2e8f4;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  .recommendation-list,
+  .tag-list,
+  .gallery-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .tag,
+  .summary-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
     font-size: 12px;
-    color: #fbbf24;
-    display: none;
+    color: #d9ecf7;
+  }
+
+  .recommendation-reason {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(8, 14, 20, 0.36);
+    font-size: 13px;
+    line-height: 1.7;
+    color: #d9edf7;
+  }
+
+  .disclaimer {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .gallery-item {
+    background: rgba(8, 14, 20, 0.58);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-body {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .gallery-title {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .gallery-meta {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .gallery-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .gallery-actions .btn {
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 920px) {
+    .container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    header {
+      padding: 24px 16px 12px;
+    }
+
+    header h1 {
+      font-size: 24px;
+    }
+
+    .container {
+      padding: 0 16px 24px;
+    }
+
+    .form-grid,
+    .capture-layout,
+    .results-grid,
+    .gallery-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 </head>
@@ -285,70 +613,179 @@
 
 <header>
   <h1>체형 분석 PoC</h1>
-  <p>MediaPipe Pose · 카메라 기반 비율 측정</p>
+  <p>촬영 대상 저장, 날짜별 사진 갤러리, 도수치료 추천 가이드를 포함한 로컬 저장형 프로토타입입니다.</p>
 </header>
 
 <div class="container">
-
-  <!-- Height input -->
-  <div class="card">
-    <div class="card-title">내 키 입력</div>
-    <div class="height-row">
-      <input type="number" id="height-input" placeholder="170" min="100" max="230" inputmode="numeric">
-      <span class="unit">cm</span>
-    </div>
-    <div class="tip" style="margin-top:8px">정확한 cm 환산을 위해 키를 입력해 주세요</div>
-  </div>
-
-  <!-- Camera -->
-  <div class="card" style="padding: 12px;">
-    <div class="card-title">카메라 (전신이 보이도록 거리 조절)</div>
-    <div id="camera-wrapper">
-      <video id="video" playsinline autoplay muted></video>
-      <canvas id="overlay-canvas"></canvas>
-      <div id="camera-status">
-        <div class="icon">📷</div>
-        <div>카메라 시작을 눌러주세요</div>
+  <div class="stack">
+    <div class="card">
+      <div class="card-header-row">
+        <div class="card-title" style="margin-bottom:0">촬영 대상 설정</div>
+        <div class="pill" id="subject-pill">선택된 대상 없음</div>
       </div>
-      <div id="guide-overlay"><div class="body-guide"></div></div>
-      <div id="pose-badge">●</div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="subject-select">기존 대상 선택</label>
+          <select id="subject-select"></select>
+        </div>
+        <div class="field">
+          <label for="height-input">키 입력</label>
+          <div class="height-row">
+            <input type="number" id="height-input" placeholder="170" min="100" max="230" inputmode="numeric">
+            <span class="unit">cm</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="subject-name">신규 대상 이름</label>
+          <input type="text" id="subject-name" placeholder="예: 김OO / 환자 A">
+        </div>
+        <div class="field">
+          <label for="subject-note">메모</label>
+          <input type="text" id="subject-note" placeholder="예: 허리 불편감, 1차 촬영">
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-primary btn-fill" id="btn-save-subject">대상 저장</button>
+        <button class="btn btn-secondary" id="btn-new-subject">새 입력으로 초기화</button>
+      </div>
+      <div class="tip" style="margin-top:10px">대상을 저장해 두면 촬영 날짜별로 다시 불러와 사진과 추천 이력을 확인할 수 있습니다.</div>
     </div>
 
-    <div id="loading-bar" style="margin-top:8px"><div id="loading-fill"></div></div>
-    <div id="status-msg" style="margin-top:6px">준비 중</div>
-    <div id="visibility-warn">⚠️ 일부 키포인트가 보이지 않습니다. 전신이 화면에 들어오도록 조정해 주세요.</div>
+    <div class="card" style="padding:14px">
+      <div class="card-header-row">
+        <div class="card-title" style="margin-bottom:0">카메라 측정</div>
+        <div class="pill">실시간 포즈 감지</div>
+      </div>
 
-    <div class="btn-row" style="margin-top:12px">
-      <button class="btn btn-primary" id="btn-start" onclick="startCamera()">▶ 카메라 시작</button>
-      <button class="btn btn-danger" id="btn-stop" onclick="stopCamera()" style="display:none">■ 중지</button>
+      <div id="camera-wrapper">
+        <video id="video" playsinline autoplay muted></video>
+        <canvas id="overlay-canvas"></canvas>
+        <div id="camera-status">
+          <div>
+            <div class="icon">📷</div>
+            <div>카메라 시작을 눌러주세요</div>
+          </div>
+        </div>
+        <div id="guide-overlay"><div class="body-guide"></div></div>
+        <div id="pose-badge">●</div>
+      </div>
+
+      <div id="loading-bar" style="margin-top:10px"><div id="loading-fill"></div></div>
+      <div id="status-msg" style="margin-top:8px">준비 중</div>
+      <div id="visibility-warn" style="margin-top:10px">일부 키포인트가 충분히 보이지 않습니다. 전신이 화면 안에 들어오도록 거리와 각도를 조정해 주세요.</div>
+
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-primary btn-fill" id="btn-start" type="button">▶ 카메라 시작</button>
+        <button class="btn btn-danger btn-fill hidden" id="btn-stop" type="button">■ 중지</button>
+      </div>
+      <button class="btn btn-capture" id="btn-capture" type="button" style="width:100%; margin-top:8px" disabled>📸 촬영 후 분석 저장</button>
+      <div class="tip" style="margin-top:10px">캡처 시 사진, 측정값, 추천 가이드가 함께 저장됩니다.</div>
     </div>
-    <button class="btn btn-capture" id="btn-capture" onclick="captureAndAnalyze()" style="margin-top:8px" disabled>📸 측정</button>
-    <div class="tip">전신이 가이드 안에 들어오면 측정 버튼을 누르세요</div>
+
+    <div class="card hidden" id="results-card">
+      <div class="card-header-row">
+        <div class="card-title" style="margin-bottom:0">측정 결과</div>
+        <div class="pill" id="capture-timestamp-pill">최근 촬영</div>
+      </div>
+
+      <div class="capture-layout">
+        <div class="capture-preview" id="capture-preview"></div>
+        <div class="recommendation-box">
+          <div class="card-title" style="margin-bottom:8px">추천 가이드</div>
+          <h3 id="recommendation-title">가이드 준비 중</h3>
+          <p id="recommendation-summary">촬영 후 자동 분석 결과가 표시됩니다.</p>
+          <div class="recommendation-reason" id="recommendation-reason">촬영 전에는 가이드 근거가 표시되지 않습니다.</div>
+          <div class="recommendation-list" id="recommendation-therapies"></div>
+          <div class="tag-list" id="recommendation-tags"></div>
+          <div class="disclaimer" id="recommendation-disclaimer"></div>
+        </div>
+      </div>
+
+      <div class="results-grid" id="results-grid"></div>
+
+      <div class="section-title">비율 분석</div>
+      <div id="ratio-section"></div>
+      <div id="calibration-note" class="tip" style="margin-top:12px"></div>
+    </div>
   </div>
 
-  <!-- Results -->
-  <div class="card" id="results-card" style="display:none">
-    <div class="card-title">측정 결과</div>
-    <div class="results-grid" id="results-grid"></div>
-    <div class="divider"></div>
-    <div class="section-title">비율 분석</div>
-    <div id="ratio-section"></div>
-    <div id="calibration-note" style="margin-top:12px; font-size:11px; color:#555; line-height:1.5;"></div>
-  </div>
+  <div class="stack">
+    <div class="card">
+      <div class="card-header-row">
+        <div>
+          <div class="card-title" style="margin-bottom:6px">학습 가이드 데이터</div>
+          <div class="tip">JSON 또는 YAML로 규칙을 수정하고 저장할 수 있습니다.</div>
+        </div>
+        <div class="pill" id="guide-status-pill">기본 데이터</div>
+      </div>
 
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="field">
+          <label for="guide-format">편집 형식</label>
+          <select id="guide-format">
+            <option value="yaml">YAML</option>
+            <option value="json">JSON</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="gallery-date-filter">날짜 필터</label>
+          <input type="date" id="gallery-date-filter">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="guide-editor">가이드 데이터 편집기</label>
+        <textarea id="guide-editor" class="mono"></textarea>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-primary btn-fill" id="btn-save-guide">가이드 저장</button>
+        <button class="btn btn-secondary" id="btn-reset-guide">기본값 복원</button>
+      </div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-secondary btn-fill" id="btn-import-guide">파일 불러오기</button>
+        <button class="btn btn-secondary btn-fill" id="btn-export-guide">현재 데이터 내보내기</button>
+      </div>
+      <input type="file" id="guide-file-input" accept=".json,.yaml,.yml" class="hidden">
+      <div class="message-box" id="guide-message" style="margin-top:12px">도수치료 기본 가이드가 로드되어 있습니다.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header-row">
+        <div>
+          <div class="card-title" style="margin-bottom:6px">촬영 갤러리</div>
+          <div class="tip">대상과 날짜 기준으로 누적 저장된 사진을 다시 확인할 수 있습니다.</div>
+        </div>
+        <div class="pill" id="gallery-count-pill">0건</div>
+      </div>
+
+      <div class="field" style="margin-bottom:12px">
+        <label for="gallery-subject-filter">대상 필터</label>
+        <select id="gallery-subject-filter"></select>
+      </div>
+
+      <div id="gallery-empty" class="capture-preview-empty">아직 저장된 촬영 이력이 없습니다.<br>대상을 저장한 뒤 촬영을 진행해 주세요.</div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
-// ─────────────────────────────────────────
-// MediaPipe Tasks Vision (CDN)
-// ─────────────────────────────────────────
-import { PoseLandmarker, FilesetResolver, DrawingUtils }
-  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+import { PoseLandmarker, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs";
+import { load as parseYaml, dump as dumpYaml } from "https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/+esm";
 
 const WASM_PATH = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm";
 const MODEL_URL = "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task";
 
-// Landmark indices
+const STORAGE_KEYS = {
+  subjects: "bodyAnalysisSubjects",
+  captures: "bodyAnalysisCaptures",
+  guide: "bodyAnalysisGuideConfig",
+  selectedSubjectId: "bodyAnalysisSelectedSubjectId"
+};
+
 const LM = {
   NOSE: 0,
   LEFT_SHOULDER: 11, RIGHT_SHOULDER: 12,
@@ -356,379 +793,956 @@ const LM = {
   LEFT_KNEE: 25, RIGHT_KNEE: 26,
   LEFT_ANKLE: 27, RIGHT_ANKLE: 28,
   LEFT_HEEL: 29, RIGHT_HEEL: 30,
-  LEFT_FOOT_INDEX: 31, RIGHT_FOOT_INDEX: 32,
+  LEFT_FOOT_INDEX: 31, RIGHT_FOOT_INDEX: 32
 };
 
-// State
-let poseLandmarker = null;
-let stream = null;
-let animId = null;
-let lastLandmarks = null;
-let isRunning = false;
+const DEFAULT_GUIDE_DATA = {
+  version: 1,
+  disclaimer: "본 결과는 촬영 기반 참고용 가이드이며 의료 진단을 대체하지 않습니다. 통증, 저림, 보행 이상이 있으면 반드시 전문의 또는 치료사 평가가 우선되어야 합니다.",
+  rules: [
+    {
+      id: "balanced-posture",
+      priority: 10,
+      title: "전신 정렬이 비교적 안정적입니다",
+      summary: "오늘은 강한 교정보다 흉추-골반의 가동성 유지와 전신 균형 재확인이 우선입니다.",
+      situation: "어깨-골반 비율과 다리 비율이 중간 범위에 있어 급격한 비대칭 신호가 적습니다.",
+      recommendation: {
+        therapies: [
+          "흉추 신전/회전 가동성 도수치료",
+          "골반 중립 인지 훈련",
+          "호흡 패턴과 체간 안정화 재교육"
+        ],
+        tags: ["유지 관리", "가벼운 재정렬", "호흡 패턴"]
+      },
+      thresholds: {
+        shoulderHipRatio: { gte: 0.95, lte: 1.08 },
+        legHeightRatio: { gte: 0.44, lte: 0.52 }
+      }
+    },
+    {
+      id: "upper-body-dominant",
+      priority: 20,
+      title: "상체 긴장 우세 패턴이 의심됩니다",
+      summary: "어깨 비율이 넓게 잡히는 편이라 상부 승모근, 견갑 주변 긴장을 먼저 낮추는 접근이 적합합니다.",
+      situation: "어깨-골반 비율이 높아 상체 사용 우세 또는 견갑 거상 패턴 가능성이 있습니다.",
+      recommendation: {
+        therapies: [
+          "견갑흉곽 리듬 회복을 위한 견갑 주변 도수치료",
+          "흉쇄유돌근/상부 승모근 과긴장 완화",
+          "흉추 신전 확보 후 목-어깨 부담 분산 운동"
+        ],
+        tags: ["목·어깨 긴장", "견갑 조절", "흉추 가동성"]
+      },
+      thresholds: {
+        shoulderHipRatio: { gt: 1.08 }
+      }
+    },
+    {
+      id: "pelvic-lower-body-focus",
+      priority: 30,
+      title: "골반-하지 중심 평가가 우선입니다",
+      summary: "하체 비율이 길게 측정되거나 골반 폭이 상대적으로 강조되어 골반 정렬과 하지 체중 분배를 먼저 보는 것이 좋습니다.",
+      situation: "다리 비율이 높거나 어깨 대비 골반 비율이 커 하체 중심 보상 패턴 가능성이 있습니다.",
+      recommendation: {
+        therapies: [
+          "천장관절/고관절 주변 도수치료로 가동 범위 확인",
+          "고관절 회전 가동성과 둔근 활성화 재교육",
+          "보행/기립 시 좌우 체중 이동 패턴 교정"
+        ],
+        tags: ["골반 정렬", "고관절", "체중 분배"]
+      },
+      thresholds: {
+        any: [
+          { legHeightRatio: { gt: 0.52 } },
+          { shoulderHipRatio: { lt: 0.95 } }
+        ]
+      }
+    },
+    {
+      id: "limited-visibility",
+      priority: 100,
+      title: "재촬영 후 재평가가 필요합니다",
+      summary: "일부 키포인트 신뢰도가 낮아 오늘은 강한 치료 제안보다 재촬영과 기본 가동성 확인이 우선입니다.",
+      situation: "전신 랜드마크가 충분히 확보되지 않아 현재 분석 신뢰도가 낮습니다.",
+      recommendation: {
+        therapies: [
+          "통증 여부와 제한 동작의 문진 우선",
+          "정면/측면 재촬영 후 비교",
+          "가벼운 관절 가동성 체크만 우선 진행"
+        ],
+        tags: ["재촬영 필요", "문진 우선", "신뢰도 낮음"]
+      },
+      thresholds: {
+        poseVisibilityScore: { lt: 0.75 }
+      }
+    }
+  ]
+};
 
-const video = document.getElementById('video');
-const overlayCanvas = document.getElementById('overlay-canvas');
-const ctx = overlayCanvas.getContext('2d');
+const state = {
+  poseLandmarker: null,
+  stream: null,
+  animId: null,
+  lastLandmarks: null,
+  isRunning: false,
+  guideFormat: "yaml",
+  selectedSubjectId: null,
+  subjects: [],
+  captures: [],
+  guideConfig: structuredClone(DEFAULT_GUIDE_DATA),
+  lastRenderedCaptureId: null
+};
 
-// ─── Init model ───
+const el = {
+  video: document.getElementById("video"),
+  overlayCanvas: document.getElementById("overlay-canvas"),
+  heightInput: document.getElementById("height-input"),
+  subjectSelect: document.getElementById("subject-select"),
+  subjectName: document.getElementById("subject-name"),
+  subjectNote: document.getElementById("subject-note"),
+  subjectPill: document.getElementById("subject-pill"),
+  gallerySubjectFilter: document.getElementById("gallery-subject-filter"),
+  galleryDateFilter: document.getElementById("gallery-date-filter"),
+  galleryCountPill: document.getElementById("gallery-count-pill"),
+  galleryEmpty: document.getElementById("gallery-empty"),
+  galleryGrid: document.getElementById("gallery-grid"),
+  btnSaveSubject: document.getElementById("btn-save-subject"),
+  btnNewSubject: document.getElementById("btn-new-subject"),
+  btnStart: document.getElementById("btn-start"),
+  btnStop: document.getElementById("btn-stop"),
+  btnCapture: document.getElementById("btn-capture"),
+  loadingBar: document.getElementById("loading-bar"),
+  statusMsg: document.getElementById("status-msg"),
+  visibilityWarn: document.getElementById("visibility-warn"),
+  cameraStatus: document.getElementById("camera-status"),
+  poseBadge: document.getElementById("pose-badge"),
+  resultsCard: document.getElementById("results-card"),
+  captureTimestampPill: document.getElementById("capture-timestamp-pill"),
+  capturePreview: document.getElementById("capture-preview"),
+  resultsGrid: document.getElementById("results-grid"),
+  ratioSection: document.getElementById("ratio-section"),
+  calibrationNote: document.getElementById("calibration-note"),
+  recommendationTitle: document.getElementById("recommendation-title"),
+  recommendationSummary: document.getElementById("recommendation-summary"),
+  recommendationReason: document.getElementById("recommendation-reason"),
+  recommendationTherapies: document.getElementById("recommendation-therapies"),
+  recommendationTags: document.getElementById("recommendation-tags"),
+  recommendationDisclaimer: document.getElementById("recommendation-disclaimer"),
+  guideFormat: document.getElementById("guide-format"),
+  guideEditor: document.getElementById("guide-editor"),
+  btnSaveGuide: document.getElementById("btn-save-guide"),
+  btnResetGuide: document.getElementById("btn-reset-guide"),
+  btnImportGuide: document.getElementById("btn-import-guide"),
+  btnExportGuide: document.getElementById("btn-export-guide"),
+  guideFileInput: document.getElementById("guide-file-input"),
+  guideMessage: document.getElementById("guide-message"),
+  guideStatusPill: document.getElementById("guide-status-pill")
+};
+
+const ctx = el.overlayCanvas.getContext("2d");
+
+function uid(prefix) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function saveStorage(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadStorage(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (error) {
+    console.warn("storage parse failed", key, error);
+    return fallback;
+  }
+}
+
+function loadState() {
+  state.subjects = loadStorage(STORAGE_KEYS.subjects, []);
+  state.captures = loadStorage(STORAGE_KEYS.captures, []);
+  state.selectedSubjectId = localStorage.getItem(STORAGE_KEYS.selectedSubjectId);
+  state.guideConfig = loadStorage(STORAGE_KEYS.guide, structuredClone(DEFAULT_GUIDE_DATA));
+  if (!Array.isArray(state.guideConfig.rules)) {
+    state.guideConfig = structuredClone(DEFAULT_GUIDE_DATA);
+  }
+}
+
+function persistSubjects() {
+  saveStorage(STORAGE_KEYS.subjects, state.subjects);
+}
+
+function persistCaptures() {
+  saveStorage(STORAGE_KEYS.captures, state.captures);
+}
+
+function persistGuide() {
+  saveStorage(STORAGE_KEYS.guide, state.guideConfig);
+}
+
+function setSelectedSubject(subjectId) {
+  state.selectedSubjectId = subjectId || null;
+  if (subjectId) {
+    localStorage.setItem(STORAGE_KEYS.selectedSubjectId, subjectId);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.selectedSubjectId);
+  }
+  syncSelectedSubjectUI();
+}
+
+function syncSelectedSubjectUI() {
+  const current = state.subjects.find((subject) => subject.id === state.selectedSubjectId) || null;
+  el.subjectSelect.value = current ? current.id : "";
+  el.subjectPill.textContent = current ? `${current.name} 선택됨` : "선택된 대상 없음";
+  if (current) {
+    el.subjectName.value = current.name;
+    el.subjectNote.value = current.note || "";
+    el.heightInput.value = current.heightCm || "";
+  } else {
+    el.subjectName.value = "";
+    el.subjectNote.value = "";
+  }
+}
+
+function renderSubjectOptions() {
+  const baseOption = `<option value="">대상을 선택하거나 새로 저장</option>`;
+  const options = state.subjects
+    .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
+    .map((subject) => `<option value="${subject.id}">${escapeHtml(subject.name)}${subject.note ? ` · ${escapeHtml(subject.note)}` : ""}</option>`)
+    .join("");
+  el.subjectSelect.innerHTML = baseOption + options;
+
+  const galleryOptions = [`<option value="">전체 대상</option>`]
+    .concat(state.subjects.map((subject) => `<option value="${subject.id}">${escapeHtml(subject.name)}</option>`))
+    .join("");
+  el.gallerySubjectFilter.innerHTML = galleryOptions;
+  if (state.selectedSubjectId) {
+    el.gallerySubjectFilter.value = state.selectedSubjectId;
+  }
+  syncSelectedSubjectUI();
+}
+
+function upsertSubjectFromForm() {
+  const name = el.subjectName.value.trim();
+  const note = el.subjectNote.value.trim();
+  const heightCm = parseFloat(el.heightInput.value);
+  if (!name) {
+    setStatus("대상 이름을 입력한 뒤 저장해 주세요.");
+    return null;
+  }
+
+  const selected = state.subjects.find((subject) => subject.id === state.selectedSubjectId);
+  const nextSubject = selected
+    ? { ...selected, name, note, updatedAt: new Date().toISOString(), heightCm: Number.isFinite(heightCm) ? heightCm : selected.heightCm || null }
+    : {
+        id: uid("subject"),
+        name,
+        note,
+        heightCm: Number.isFinite(heightCm) ? heightCm : null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+  if (selected) {
+    state.subjects = state.subjects.map((subject) => subject.id === nextSubject.id ? nextSubject : subject);
+  } else {
+    state.subjects.push(nextSubject);
+  }
+
+  persistSubjects();
+  setSelectedSubject(nextSubject.id);
+  renderSubjectOptions();
+  renderGallery();
+  setStatus(`대상 "${nextSubject.name}" 정보가 저장되었습니다.`);
+  return nextSubject;
+}
+
+function ensureActiveSubject() {
+  if (state.selectedSubjectId) {
+    const existing = state.subjects.find((subject) => subject.id === state.selectedSubjectId);
+    if (existing) {
+      const heightCm = parseFloat(el.heightInput.value);
+      if (Number.isFinite(heightCm) && existing.heightCm !== heightCm) {
+        existing.heightCm = heightCm;
+        existing.updatedAt = new Date().toISOString();
+        persistSubjects();
+      }
+      return existing;
+    }
+  }
+  return upsertSubjectFromForm();
+}
+
+function resetSubjectForm() {
+  setSelectedSubject(null);
+  el.subjectSelect.value = "";
+  el.subjectName.value = "";
+  el.subjectNote.value = "";
+}
+
+function setStatus(message) {
+  el.statusMsg.textContent = message;
+}
+
+function showLoading(enabled) {
+  el.loadingBar.classList.toggle("active", enabled);
+}
+
+function setPoseBadge(cls, text) {
+  el.poseBadge.className = "";
+  el.poseBadge.id = "pose-badge";
+  el.poseBadge.style.display = "";
+  el.poseBadge.textContent = `● ${text}`;
+  if (cls === "good") {
+    el.poseBadge.style.color = "var(--good)";
+    el.poseBadge.style.borderColor = "rgba(74, 222, 128, 0.45)";
+  } else if (cls === "partial") {
+    el.poseBadge.style.color = "var(--warn)";
+    el.poseBadge.style.borderColor = "rgba(251, 191, 36, 0.45)";
+  } else {
+    el.poseBadge.style.color = "var(--danger)";
+    el.poseBadge.style.borderColor = "rgba(251, 113, 133, 0.45)";
+  }
+}
+
 async function initModel() {
-  setStatus('모델 로딩 중…');
+  setStatus("모델 로딩 중…");
   showLoading(true);
   try {
     const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
-    poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+    state.poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
       baseOptions: {
         modelAssetPath: MODEL_URL,
-        delegate: "GPU",
+        delegate: "GPU"
       },
       runningMode: "VIDEO",
       numPoses: 1,
       minPoseDetectionConfidence: 0.5,
       minPosePresenceConfidence: 0.5,
-      minTrackingConfidence: 0.5,
+      minTrackingConfidence: 0.5
     });
-    setStatus('모델 로딩 완료');
-  } catch (e) {
-    console.error(e);
-    setStatus('모델 로딩 실패: ' + e.message);
+    setStatus("모델 로딩 완료");
+  } catch (error) {
+    console.error(error);
+    setStatus(`모델 로딩 실패: ${error.message}`);
   }
   showLoading(false);
 }
 
-// ─── Camera ───
-window.startCamera = async function() {
-  if (!poseLandmarker) await initModel();
-  if (!poseLandmarker) return;
+async function startCamera() {
+  if (!state.poseLandmarker) {
+    await initModel();
+  }
+  if (!state.poseLandmarker) return;
 
   try {
-    stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 720 }, height: { ideal: 960 } },
-      audio: false,
+    state.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: "environment",
+        width: { ideal: 720 },
+        height: { ideal: 960 }
+      },
+      audio: false
     });
-    video.srcObject = stream;
-    await new Promise(r => video.onloadedmetadata = r);
-    video.play();
-
-    document.getElementById('camera-status').style.display = 'none';
-    document.getElementById('btn-start').style.display = 'none';
-    document.getElementById('btn-stop').style.display = '';
-    document.getElementById('btn-capture').disabled = false;
-    document.getElementById('pose-badge').style.display = '';
-    isRunning = true;
+    el.video.srcObject = state.stream;
+    await new Promise((resolve) => {
+      el.video.onloadedmetadata = resolve;
+    });
+    await el.video.play();
+    state.isRunning = true;
+    el.cameraStatus.classList.add("hidden");
+    el.btnStart.classList.add("hidden");
+    el.btnStop.classList.remove("hidden");
+    el.btnCapture.disabled = false;
+    el.poseBadge.style.display = "";
     loop();
-    setStatus('실시간 포즈 감지 중…');
-  } catch (e) {
-    if (e.name === 'NotAllowedError') {
-      setStatus('❌ 카메라 권한이 거부되었습니다. 브라우저 설정에서 허용해 주세요.');
+    setStatus("실시간 포즈 감지 중…");
+  } catch (error) {
+    if (error.name === "NotAllowedError") {
+      setStatus("카메라 권한이 거부되었습니다. 브라우저 설정에서 허용해 주세요.");
     } else {
-      setStatus('카메라 오류: ' + e.message);
+      setStatus(`카메라 오류: ${error.message}`);
     }
   }
-};
+}
 
-window.stopCamera = function() {
-  isRunning = false;
-  if (animId) cancelAnimationFrame(animId);
-  if (stream) stream.getTracks().forEach(t => t.stop());
-  video.srcObject = null;
-  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  document.getElementById('camera-status').style.display = '';
-  document.getElementById('btn-start').style.display = '';
-  document.getElementById('btn-stop').style.display = 'none';
-  document.getElementById('btn-capture').disabled = true;
-  document.getElementById('pose-badge').style.display = 'none';
-  document.getElementById('visibility-warn').style.display = 'none';
-  lastLandmarks = null;
-  setStatus('카메라 중지됨');
-};
+function stopCamera() {
+  state.isRunning = false;
+  if (state.animId) cancelAnimationFrame(state.animId);
+  if (state.stream) {
+    state.stream.getTracks().forEach((track) => track.stop());
+  }
+  state.stream = null;
+  el.video.srcObject = null;
+  ctx.clearRect(0, 0, el.overlayCanvas.width, el.overlayCanvas.height);
+  state.lastLandmarks = null;
+  el.cameraStatus.classList.remove("hidden");
+  el.btnStart.classList.remove("hidden");
+  el.btnStop.classList.add("hidden");
+  el.btnCapture.disabled = true;
+  el.poseBadge.style.display = "none";
+  el.visibilityWarn.style.display = "none";
+  setStatus("카메라 중지됨");
+}
 
-// ─── Detection loop ───
 function loop() {
-  if (!isRunning) return;
-
-  if (video.readyState >= 2) {
+  if (!state.isRunning) return;
+  if (el.video.readyState >= 2) {
     resizeCanvas();
-    const result = poseLandmarker.detectForVideo(video, performance.now());
-    if (result.landmarks && result.landmarks.length > 0) {
-      lastLandmarks = result.landmarks[0];
-      drawPose(result.landmarks[0], result.worldLandmarks?.[0]);
-      updatePoseBadge(lastLandmarks);
+    const result = state.poseLandmarker.detectForVideo(el.video, performance.now());
+    if (result.landmarks?.length) {
+      state.lastLandmarks = result.landmarks[0];
+      drawPose(state.lastLandmarks);
+      updatePoseBadge(state.lastLandmarks);
     } else {
-      lastLandmarks = null;
-      ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-      setPoseBadge('bad', '포즈 없음');
+      state.lastLandmarks = null;
+      ctx.clearRect(0, 0, el.overlayCanvas.width, el.overlayCanvas.height);
+      setPoseBadge("bad", "포즈 없음");
     }
   }
-
-  animId = requestAnimationFrame(loop);
+  state.animId = requestAnimationFrame(loop);
 }
 
 function resizeCanvas() {
-  const w = video.videoWidth || video.clientWidth;
-  const h = video.videoHeight || video.clientHeight;
-  if (overlayCanvas.width !== w || overlayCanvas.height !== h) {
-    overlayCanvas.width = w;
-    overlayCanvas.height = h;
+  const width = el.video.videoWidth || el.video.clientWidth;
+  const height = el.video.videoHeight || el.video.clientHeight;
+  if (el.overlayCanvas.width !== width || el.overlayCanvas.height !== height) {
+    el.overlayCanvas.width = width;
+    el.overlayCanvas.height = height;
   }
 }
 
-// ─── Draw pose ───
 function drawPose(landmarks) {
-  ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-  const W = overlayCanvas.width;
-  const H = overlayCanvas.height;
+  ctx.clearRect(0, 0, el.overlayCanvas.width, el.overlayCanvas.height);
+  const width = el.overlayCanvas.width;
+  const height = el.overlayCanvas.height;
+  const connections = PoseLandmarker.POSE_CONNECTIONS;
 
-  // Connections
-  const CONNECTIONS = PoseLandmarker.POSE_CONNECTIONS;
-  ctx.strokeStyle = 'rgba(79,158,255,0.6)';
+  ctx.strokeStyle = "rgba(92, 200, 255, 0.62)";
   ctx.lineWidth = 2;
-  for (const [a, b] of CONNECTIONS) {
-    const lA = landmarks[a], lB = landmarks[b];
-    if (!lA || !lB) continue;
-    if (lA.visibility < 0.3 || lB.visibility < 0.3) continue;
+  for (const [a, b] of connections) {
+    const lmA = landmarks[a];
+    const lmB = landmarks[b];
+    if (!lmA || !lmB || lmA.visibility < 0.3 || lmB.visibility < 0.3) continue;
     ctx.beginPath();
-    ctx.moveTo(lA.x * W, lA.y * H);
-    ctx.lineTo(lB.x * W, lB.y * H);
+    ctx.moveTo(lmA.x * width, lmA.y * height);
+    ctx.lineTo(lmB.x * width, lmB.y * height);
     ctx.stroke();
   }
 
-  // Key points
   const keyIndices = Object.values(LM);
-  for (let i = 0; i < landmarks.length; i++) {
-    const lm = landmarks[i];
-    if (lm.visibility < 0.3) continue;
-    const isKey = keyIndices.includes(i);
+  for (let index = 0; index < landmarks.length; index += 1) {
+    const landmark = landmarks[index];
+    if (landmark.visibility < 0.3) continue;
+    const radius = keyIndices.includes(index) ? 5 : 3;
     ctx.beginPath();
-    ctx.arc(lm.x * W, lm.y * H, isKey ? 5 : 3, 0, 2 * Math.PI);
-    ctx.fillStyle = isKey ? '#4ade80' : 'rgba(255,255,255,0.4)';
+    ctx.arc(landmark.x * width, landmark.y * height, radius, 0, 2 * Math.PI);
+    ctx.fillStyle = keyIndices.includes(index) ? "#7ef0c6" : "rgba(255, 255, 255, 0.34)";
     ctx.fill();
   }
 
-  // Measurement lines
-  drawMeasureLine(landmarks, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, '#fbbf24', '어깨');
-  drawMeasureLine(landmarks, LM.LEFT_HIP, LM.RIGHT_HIP, '#f87171', '골반');
+  drawMeasureLine(landmarks, LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, "#fbbf24", "어깨");
+  drawMeasureLine(landmarks, LM.LEFT_HIP, LM.RIGHT_HIP, "#fb7185", "골반");
 }
 
-function drawMeasureLine(lms, idxA, idxB, color, label) {
-  const W = overlayCanvas.width, H = overlayCanvas.height;
-  const a = lms[idxA], b = lms[idxB];
+function drawMeasureLine(landmarks, idxA, idxB, color, label) {
+  const width = el.overlayCanvas.width;
+  const height = el.overlayCanvas.height;
+  const a = landmarks[idxA];
+  const b = landmarks[idxB];
   if (!a || !b || a.visibility < 0.3 || b.visibility < 0.3) return;
   ctx.strokeStyle = color;
   ctx.lineWidth = 2;
-  ctx.setLineDash([4, 3]);
+  ctx.setLineDash([5, 4]);
   ctx.beginPath();
-  ctx.moveTo(a.x * W, a.y * H);
-  ctx.lineTo(b.x * W, b.y * H);
+  ctx.moveTo(a.x * width, a.y * height);
+  ctx.lineTo(b.x * width, b.y * height);
   ctx.stroke();
   ctx.setLineDash([]);
-  // label
   ctx.fillStyle = color;
-  ctx.font = 'bold 11px sans-serif';
-  ctx.fillText(label, ((a.x + b.x) / 2) * W + 4, ((a.y + b.y) / 2) * H - 4);
+  ctx.font = "bold 12px sans-serif";
+  ctx.fillText(label, ((a.x + b.x) / 2) * width + 4, ((a.y + b.y) / 2) * height - 4);
 }
 
-// ─── Pose quality ───
-function updatePoseBadge(lms) {
-  const needed = [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP,
-                  LM.LEFT_ANKLE, LM.RIGHT_ANKLE];
-  const visible = needed.filter(i => lms[i]?.visibility > 0.5).length;
-
-  if (visible === needed.length) {
-    setPoseBadge('good', '포즈 양호');
-    document.getElementById('visibility-warn').style.display = 'none';
-  } else if (visible >= 4) {
-    setPoseBadge('partial', '부분 감지');
-    document.getElementById('visibility-warn').style.display = 'block';
+function updatePoseBadge(landmarks) {
+  const needed = [LM.LEFT_SHOULDER, LM.RIGHT_SHOULDER, LM.LEFT_HIP, LM.RIGHT_HIP, LM.LEFT_ANKLE, LM.RIGHT_ANKLE];
+  const visibleCount = needed.filter((index) => landmarks[index]?.visibility > 0.5).length;
+  if (visibleCount === needed.length) {
+    setPoseBadge("good", "포즈 양호");
+    el.visibilityWarn.style.display = "none";
+  } else if (visibleCount >= 4) {
+    setPoseBadge("partial", "부분 감지");
+    el.visibilityWarn.style.display = "block";
   } else {
-    setPoseBadge('bad', '포즈 불량');
-    document.getElementById('visibility-warn').style.display = 'block';
+    setPoseBadge("bad", "포즈 불량");
+    el.visibilityWarn.style.display = "block";
   }
 }
 
-function setPoseBadge(cls, text) {
-  const el = document.getElementById('pose-badge');
-  el.className = 'id="pose-badge ' + cls;
-  el.className = cls;
-  el.id = 'pose-badge';
-  el.style.display = '';
-  el.textContent = '● ' + text;
-  // manually set color
-  if (cls === 'good') el.style.color = '#4ade80', el.style.borderColor = '#4ade80';
-  else if (cls === 'partial') el.style.color = '#fbbf24', el.style.borderColor = '#fbbf24';
-  else el.style.color = '#f87171', el.style.borderColor = '#f87171';
+function midpoint(a, b) {
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2 };
 }
 
-// ─── Capture & Analyze ───
-window.captureAndAnalyze = function() {
-  if (!lastLandmarks) {
-    setStatus('포즈가 감지되지 않았습니다. 전신이 보이도록 조정해 주세요.');
-    return;
-  }
+function pointDistance(a, b, width, height) {
+  const dx = (a.x - b.x) * width;
+  const dy = (a.y - b.y) * height;
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
-  const lms = lastLandmarks;
-  const heightCm = parseFloat(document.getElementById('height-input').value);
-
-  // Pixel distances (normalized 0-1, use video resolution ratio)
-  // Using normalized coords (0-1 range relative to image)
-  const W = video.videoWidth || 1;
-  const H = video.videoHeight || 1;
-
-  function dist(a, b) {
-    const dx = (a.x - b.x) * W;
-    const dy = (a.y - b.y) * H;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-  function midpoint(a, b) {
-    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: (a.z + b.z) / 2 };
-  }
-
-  const lShoulder = lms[LM.LEFT_SHOULDER];
-  const rShoulder = lms[LM.RIGHT_SHOULDER];
-  const lHip = lms[LM.LEFT_HIP];
-  const rHip = lms[LM.RIGHT_HIP];
-  const lAnkle = lms[LM.LEFT_ANKLE];
-  const rAnkle = lms[LM.RIGHT_ANKLE];
-  const lKnee = lms[LM.LEFT_KNEE];
-  const rKnee = lms[LM.RIGHT_KNEE];
-  const nose = lms[LM.NOSE];
+function calculateMetrics(landmarks, heightCm) {
+  const width = el.video.videoWidth || 1;
+  const height = el.video.videoHeight || 1;
+  const lShoulder = landmarks[LM.LEFT_SHOULDER];
+  const rShoulder = landmarks[LM.RIGHT_SHOULDER];
+  const lHip = landmarks[LM.LEFT_HIP];
+  const rHip = landmarks[LM.RIGHT_HIP];
+  const lAnkle = landmarks[LM.LEFT_ANKLE];
+  const rAnkle = landmarks[LM.RIGHT_ANKLE];
+  const lKnee = landmarks[LM.LEFT_KNEE];
+  const rKnee = landmarks[LM.RIGHT_KNEE];
+  const nose = landmarks[LM.NOSE];
 
   const midShoulder = midpoint(lShoulder, rShoulder);
   const midHip = midpoint(lHip, rHip);
   const midAnkle = midpoint(lAnkle, rAnkle);
   const midKnee = midpoint(lKnee, rKnee);
 
-  // Pixel measurements
-  const shoulderWidthPx = dist(lShoulder, rShoulder);
-  const hipWidthPx = dist(lHip, rHip);
-  const upperBodyPx = dist({ x: midShoulder.x, y: midShoulder.y }, { x: midHip.x, y: midHip.y }) * W / W;
-  // re-calc properly
-  const upperBodyPxV = Math.sqrt(
-    Math.pow((midShoulder.x - midHip.x) * W, 2) +
-    Math.pow((midShoulder.y - midHip.y) * H, 2)
-  );
-  const lowerBodyPxV = Math.sqrt(
-    Math.pow((midHip.x - midAnkle.x) * W, 2) +
-    Math.pow((midHip.y - midAnkle.y) * H, 2)
-  );
-  const thighPxV = Math.sqrt(
-    Math.pow((midHip.x - midKnee.x) * W, 2) +
-    Math.pow((midHip.y - midKnee.y) * H, 2)
-  );
-  const shinPxV = Math.sqrt(
-    Math.pow((midKnee.x - midAnkle.x) * W, 2) +
-    Math.pow((midKnee.y - midAnkle.y) * H, 2)
-  );
+  const shoulderWidthPx = pointDistance(lShoulder, rShoulder, width, height);
+  const hipWidthPx = pointDistance(lHip, rHip, width, height);
+  const upperBodyPx = pointDistance(midShoulder, midHip, width, height);
+  const lowerBodyPx = pointDistance(midHip, midAnkle, width, height);
+  const thighPx = pointDistance(midHip, midKnee, width, height);
+  const shinPx = pointDistance(midKnee, midAnkle, width, height);
 
-  // Total height estimate: nose to mid-ankle (approximate head + body)
-  const headOffset = 0.07; // ~7% of height for head above nose
-  const nosePxY = nose.y * H;
-  const anklePxY = midAnkle.y * H;
-  const bodyHeightPx = (anklePxY - nosePxY) / (1 - headOffset);
+  const headOffset = 0.07;
+  const bodyHeightPx = ((midAnkle.y * height) - (nose.y * height)) / (1 - headOffset);
+  const scaleCm = Number.isFinite(heightCm) && heightCm > 100 ? heightCm / bodyHeightPx : null;
+  const toCm = (px) => (scaleCm ? Math.round(px * scaleCm * 10) / 10 : null);
+  const poseVisibilityScore = [lShoulder, rShoulder, lHip, rHip, lAnkle, rAnkle]
+    .map((landmark) => landmark?.visibility || 0)
+    .reduce((sum, value) => sum + value, 0) / 6;
 
-  // Scale factor
-  let scaleCm = null;
-  let calibNote = '';
-  if (heightCm && !isNaN(heightCm) && heightCm > 100) {
-    scaleCm = heightCm / bodyHeightPx;
-    calibNote = `키 ${heightCm}cm 기준으로 환산 (픽셀 높이 ${Math.round(bodyHeightPx)}px → 1px ≈ ${scaleCm.toFixed(3)}cm)`;
-  } else {
-    calibNote = '키 미입력 — 비율만 표시됩니다';
+  return {
+    heightCm: Number.isFinite(heightCm) ? heightCm : null,
+    bodyHeightPx,
+    scaleCm,
+    poseVisibilityScore,
+    measurements: {
+      shoulderWidthPx,
+      hipWidthPx,
+      upperBodyPx,
+      lowerBodyPx,
+      thighPx,
+      shinPx,
+      shoulderWidthCm: toCm(shoulderWidthPx),
+      hipWidthCm: toCm(hipWidthPx),
+      upperBodyCm: toCm(upperBodyPx),
+      lowerBodyCm: toCm(lowerBodyPx),
+      thighCm: toCm(thighPx),
+      shinCm: toCm(shinPx)
+    },
+    ratios: {
+      shoulderHipRatio: shoulderWidthPx / hipWidthPx,
+      legHeightRatio: lowerBodyPx / bodyHeightPx
+    }
+  };
+}
+
+function takeSnapshot() {
+  const width = el.video.videoWidth;
+  const height = el.video.videoHeight;
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const canvasCtx = canvas.getContext("2d");
+  canvasCtx.drawImage(el.video, 0, 0, width, height);
+  canvasCtx.drawImage(el.overlayCanvas, 0, 0, width, height);
+  return canvas.toDataURL("image/jpeg", 0.9);
+}
+
+function metricFormat(cmValue, pxValue, bodyHeightPx) {
+  if (cmValue !== null && Number.isFinite(cmValue)) {
+    return `${cmValue}<span>cm</span>`;
   }
-
-  function toCm(px) {
-    if (!scaleCm) return null;
-    return Math.round(px * scaleCm * 10) / 10;
-  }
-  function fmt(cm, px) {
-    if (cm !== null) return `${cm}<span>cm</span>`;
-    return `${(px / bodyHeightPx * 100).toFixed(1)}<span>%</span>`;
-  }
-
-  // Ratios
-  const shoulderHipRatio = shoulderWidthPx / hipWidthPx;
-  const legHeightRatio = lowerBodyPxV / bodyHeightPx;
-
-  // Visibility check
-  const allVis = [lShoulder, rShoulder, lHip, rHip, lAnkle, rAnkle]
-    .every(lm => lm.visibility > 0.4);
-
-  // Render results
-  const grid = document.getElementById('results-grid');
-  grid.innerHTML = `
-    <div class="result-item highlight">
-      <div class="result-label">추정 키 (캘리브레이션)</div>
-      <div class="result-value good">${heightCm || '?'}<span>cm</span></div>
-    </div>
-    <div class="result-item">
-      <div class="result-label">어깨 너비</div>
-      <div class="result-value">${fmt(toCm(shoulderWidthPx), shoulderWidthPx)}</div>
-    </div>
-    <div class="result-item">
-      <div class="result-label">골반 너비</div>
-      <div class="result-value">${fmt(toCm(hipWidthPx), hipWidthPx)}</div>
-    </div>
-    <div class="result-item">
-      <div class="result-label">상체 길이</div>
-      <div class="result-value">${fmt(toCm(upperBodyPxV), upperBodyPxV)}</div>
-    </div>
-    <div class="result-item">
-      <div class="result-label">다리 길이</div>
-      <div class="result-value">${fmt(toCm(lowerBodyPxV), lowerBodyPxV)}</div>
-    </div>
-    <div class="result-item">
-      <div class="result-label">허벅지 길이</div>
-      <div class="result-value">${fmt(toCm(thighPxV), thighPxV)}</div>
-    </div>
-    <div class="result-item">
-      <div class="result-label">종아리 길이</div>
-      <div class="result-value">${fmt(toCm(shinPxV), shinPxV)}</div>
-    </div>
-  `;
-
-  // Ratio section
-  const ratioSection = document.getElementById('ratio-section');
-  ratioSection.innerHTML = `
-    ${ratioBar('어깨-골반 비율', shoulderHipRatio, 0.8, 1.4, '0.8', '1.4',
-      `어깨가 골반보다 ${shoulderHipRatio > 1 ? (((shoulderHipRatio-1)*100).toFixed(0)+'% 넓음') : '좁음'}`)}
-    ${ratioBar('다리-키 비율', legHeightRatio, 0.40, 0.60, '40%', '60%',
-      `신체 비율에서 다리가 ${(legHeightRatio*100).toFixed(1)}% 차지`)}
-  `;
-
-  document.getElementById('calibration-note').textContent = calibNote;
-
-  if (!allVis) {
-    document.getElementById('calibration-note').textContent +=
-      ' ⚠️ 일부 키포인트 신뢰도가 낮아 측정 정확도가 떨어질 수 있습니다.';
-  }
-
-  document.getElementById('results-card').style.display = '';
-  document.getElementById('results-card').scrollIntoView({ behavior: 'smooth' });
-};
+  return `${((pxValue / bodyHeightPx) * 100).toFixed(1)}<span>%</span>`;
+}
 
 function ratioBar(label, value, min, max, minLabel, maxLabel, desc) {
-  const pct = Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100));
+  const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
   return `
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:13px;font-weight:600">${label}</span>
-        <span style="font-size:13px;color:#4f9eff;font-weight:700">${value.toFixed(2)}</span>
+    <div class="ratio-block">
+      <div class="ratio-meta">
+        <strong>${escapeHtml(label)}</strong>
+        <span>${value.toFixed(2)}</span>
       </div>
       <div class="ratio-bar-bg"><div class="ratio-bar-fill" style="width:${pct}%"></div></div>
       <div class="ratio-bar-label"><span>${minLabel}</span><span>${maxLabel}</span></div>
-      <div style="font-size:11px;color:#666;margin-top:3px">${desc}</div>
+      <div class="tip" style="margin-top:4px">${escapeHtml(desc)}</div>
     </div>
   `;
 }
 
-// ─── Helpers ───
-function setStatus(msg) {
-  document.getElementById('status-msg').textContent = msg;
-}
-function showLoading(on) {
-  document.getElementById('loading-bar').className = on ? 'active' : '';
+function evaluateThresholdSet(metrics, thresholds) {
+  if (!thresholds) return true;
+  if (thresholds.any) {
+    return thresholds.any.some((child) => evaluateThresholdSet(metrics, child));
+  }
+  return Object.entries(thresholds).every(([metricName, condition]) => {
+    const value = metricName in metrics.ratios
+      ? metrics.ratios[metricName]
+      : metrics[metricName];
+    if (value === undefined || value === null) return false;
+    if (condition.gt !== undefined && !(value > condition.gt)) return false;
+    if (condition.gte !== undefined && !(value >= condition.gte)) return false;
+    if (condition.lt !== undefined && !(value < condition.lt)) return false;
+    if (condition.lte !== undefined && !(value <= condition.lte)) return false;
+    return true;
+  });
 }
 
-// ─── Auto-init model on page load ───
+function buildRecommendation(metrics) {
+  const orderedRules = [...state.guideConfig.rules].sort((a, b) => (a.priority || 999) - (b.priority || 999));
+  const matched = orderedRules.find((rule) => evaluateThresholdSet(metrics, rule.thresholds)) || orderedRules[0];
+  const scenarioText = `이 사람은 ${matched.situation} 오늘은 ${matched.recommendation.therapies[0]} 중심 접근이 추천됩니다.`;
+  return {
+    ruleId: matched.id,
+    title: matched.title,
+    summary: matched.summary,
+    scenarioText,
+    reason: matched.situation,
+    therapies: matched.recommendation.therapies,
+    tags: matched.recommendation.tags || [],
+    disclaimer: state.guideConfig.disclaimer || DEFAULT_GUIDE_DATA.disclaimer
+  };
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function renderCapture(capture) {
+  state.lastRenderedCaptureId = capture.id;
+  el.resultsCard.classList.remove("hidden");
+  el.captureTimestampPill.textContent = `${capture.subjectName} · ${formatDateTime(capture.capturedAt)}`;
+  el.capturePreview.innerHTML = capture.imageData
+    ? `<img src="${capture.imageData}" alt="${escapeHtml(capture.subjectName)} 촬영 이미지">`
+    : `<div class="capture-preview-empty">이미지 미리보기가 없습니다.</div>`;
+
+  const metrics = capture.metrics;
+  const measurements = metrics.measurements;
+  el.resultsGrid.innerHTML = `
+    <div class="result-item highlight">
+      <div class="result-label">등록 대상 / 기준 키</div>
+      <div class="result-value">${escapeHtml(capture.subjectName)}<span>${metrics.heightCm ? `${metrics.heightCm}cm` : "비율 모드"}</span></div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">어깨 너비</div>
+      <div class="result-value">${metricFormat(measurements.shoulderWidthCm, measurements.shoulderWidthPx, metrics.bodyHeightPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">골반 너비</div>
+      <div class="result-value">${metricFormat(measurements.hipWidthCm, measurements.hipWidthPx, metrics.bodyHeightPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">상체 길이</div>
+      <div class="result-value">${metricFormat(measurements.upperBodyCm, measurements.upperBodyPx, metrics.bodyHeightPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">다리 길이</div>
+      <div class="result-value">${metricFormat(measurements.lowerBodyCm, measurements.lowerBodyPx, metrics.bodyHeightPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">허벅지 길이</div>
+      <div class="result-value">${metricFormat(measurements.thighCm, measurements.thighPx, metrics.bodyHeightPx)}</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">종아리 길이</div>
+      <div class="result-value">${metricFormat(measurements.shinCm, measurements.shinPx, metrics.bodyHeightPx)}</div>
+    </div>
+  `;
+
+  el.ratioSection.innerHTML = [
+    ratioBar("어깨-골반 비율", metrics.ratios.shoulderHipRatio, 0.8, 1.4, "0.8", "1.4", `현재 비율은 ${metrics.ratios.shoulderHipRatio.toFixed(2)} 입니다.`),
+    ratioBar("다리-키 비율", metrics.ratios.legHeightRatio, 0.4, 0.6, "40%", "60%", `하체가 전체 키 대비 ${(metrics.ratios.legHeightRatio * 100).toFixed(1)}%를 차지합니다.`)
+  ].join("");
+
+  const noteParts = [];
+  if (metrics.scaleCm) {
+    noteParts.push(`키 ${metrics.heightCm}cm 기준 환산 (1px ≈ ${metrics.scaleCm.toFixed(3)}cm)`);
+  } else {
+    noteParts.push("키 미입력 상태로 비율만 표시합니다.");
+  }
+  if (metrics.poseVisibilityScore < 0.75) {
+    noteParts.push("일부 키포인트 신뢰도가 낮아 재촬영이 권장됩니다.");
+  }
+  el.calibrationNote.textContent = noteParts.join(" ");
+
+  renderRecommendation(capture.recommendation);
+  el.resultsCard.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderRecommendation(recommendation) {
+  el.recommendationTitle.textContent = recommendation.title;
+  el.recommendationSummary.textContent = recommendation.summary;
+  el.recommendationReason.textContent = recommendation.scenarioText;
+  el.recommendationTherapies.innerHTML = recommendation.therapies
+    .map((therapy) => `<span class="summary-chip">${escapeHtml(therapy)}</span>`)
+    .join("");
+  el.recommendationTags.innerHTML = recommendation.tags
+    .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
+    .join("");
+  el.recommendationDisclaimer.textContent = recommendation.disclaimer;
+}
+
+function formatDateTime(isoString) {
+  return new Date(isoString).toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function formatDateOnly(isoString) {
+  return new Date(isoString).toISOString().slice(0, 10);
+}
+
+function renderGallery() {
+  const subjectId = el.gallerySubjectFilter.value;
+  const dateFilter = el.galleryDateFilter.value;
+  const filtered = state.captures
+    .filter((capture) => !subjectId || capture.subjectId === subjectId)
+    .filter((capture) => !dateFilter || capture.dateKey === dateFilter)
+    .sort((a, b) => new Date(b.capturedAt) - new Date(a.capturedAt));
+
+  el.galleryCountPill.textContent = `${filtered.length}건`;
+  el.galleryEmpty.classList.toggle("hidden", filtered.length > 0);
+  el.galleryGrid.innerHTML = filtered.map((capture) => `
+    <div class="gallery-item">
+      <img src="${capture.imageData}" alt="${escapeHtml(capture.subjectName)} ${escapeHtml(capture.dateKey)} 촬영">
+      <div class="gallery-body">
+        <div class="gallery-title">${escapeHtml(capture.subjectName)}</div>
+        <div class="gallery-meta">${escapeHtml(formatDateTime(capture.capturedAt))}<br>${escapeHtml(capture.recommendation.title)}</div>
+        <div class="gallery-summary">
+          <span class="summary-chip">어깨/골반 ${capture.metrics.ratios.shoulderHipRatio.toFixed(2)}</span>
+          <span class="summary-chip">다리/키 ${(capture.metrics.ratios.legHeightRatio * 100).toFixed(1)}%</span>
+        </div>
+        <div class="gallery-actions">
+          <button class="btn btn-secondary" type="button" data-action="view" data-capture-id="${capture.id}">상세 보기</button>
+          <button class="btn btn-danger" type="button" data-action="delete" data-capture-id="${capture.id}">삭제</button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function parseGuideText(text, format) {
+  if (format === "json") {
+    return JSON.parse(text);
+  }
+  return parseYaml(text);
+}
+
+function serializeGuide(data, format) {
+  if (format === "json") {
+    return JSON.stringify(data, null, 2);
+  }
+  return dumpYaml(data, { lineWidth: 100, noRefs: true });
+}
+
+function renderGuideEditor() {
+  el.guideEditor.value = serializeGuide(state.guideConfig, state.guideFormat);
+  const isDefault = JSON.stringify(state.guideConfig) === JSON.stringify(DEFAULT_GUIDE_DATA);
+  el.guideStatusPill.textContent = isDefault ? "기본 데이터" : "사용자 수정 데이터";
+}
+
+function refreshRecommendationsFromGuide() {
+  state.captures = state.captures.map((capture) => ({
+    ...capture,
+    recommendation: buildRecommendation(capture.metrics)
+  }));
+  persistCaptures();
+  renderGallery();
+  if (state.lastRenderedCaptureId) {
+    const current = state.captures.find((capture) => capture.id === state.lastRenderedCaptureId);
+    if (current) {
+      renderCapture(current);
+    }
+  }
+}
+
+function showGuideMessage(message, isError = false) {
+  el.guideMessage.textContent = message;
+  el.guideMessage.style.borderColor = isError ? "rgba(251, 113, 133, 0.28)" : "rgba(92, 200, 255, 0.18)";
+  el.guideMessage.style.background = isError ? "rgba(251, 113, 133, 0.1)" : "rgba(92, 200, 255, 0.08)";
+  el.guideMessage.style.color = isError ? "#ffd2db" : "#d8f2ff";
+}
+
+function validateGuideConfig(config) {
+  if (!config || !Array.isArray(config.rules) || config.rules.length === 0) {
+    throw new Error("rules 배열이 필요합니다.");
+  }
+  config.rules.forEach((rule, index) => {
+    if (!rule.id || !rule.title || !rule.summary || !rule.recommendation?.therapies?.length) {
+      throw new Error(`rules[${index}] 항목에 id/title/summary/recommendation.therapies 가 필요합니다.`);
+    }
+  });
+}
+
+function saveGuideFromEditor() {
+  try {
+    const parsed = parseGuideText(el.guideEditor.value, state.guideFormat);
+    validateGuideConfig(parsed);
+    state.guideConfig = parsed;
+    persistGuide();
+    renderGuideEditor();
+    refreshRecommendationsFromGuide();
+    showGuideMessage("가이드 데이터가 저장되었습니다.");
+  } catch (error) {
+    console.error(error);
+    showGuideMessage(`가이드 저장 실패: ${error.message}`, true);
+  }
+}
+
+function downloadText(filename, content) {
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function handleGalleryClick(event) {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  const captureId = button.dataset.captureId;
+  const action = button.dataset.action;
+  const capture = state.captures.find((item) => item.id === captureId);
+  if (!capture) return;
+
+  if (action === "view") {
+    renderCapture(capture);
+  }
+
+  if (action === "delete") {
+    state.captures = state.captures.filter((item) => item.id !== captureId);
+    persistCaptures();
+    if (state.lastRenderedCaptureId === captureId) {
+      state.lastRenderedCaptureId = null;
+      el.resultsCard.classList.add("hidden");
+    }
+    renderGallery();
+    setStatus("촬영 이력이 삭제되었습니다.");
+  }
+}
+
+function captureAndAnalyze() {
+  if (!state.lastLandmarks) {
+    setStatus("포즈가 감지되지 않았습니다. 전신이 보이도록 조정해 주세요.");
+    return;
+  }
+
+  const activeSubject = ensureActiveSubject();
+  if (!activeSubject) return;
+
+  const heightCm = parseFloat(el.heightInput.value || activeSubject.heightCm || "");
+  const metrics = calculateMetrics(state.lastLandmarks, heightCm);
+  const recommendation = buildRecommendation(metrics);
+  const capturedAt = new Date().toISOString();
+  const capture = {
+    id: uid("capture"),
+    subjectId: activeSubject.id,
+    subjectName: activeSubject.name,
+    subjectNote: activeSubject.note || "",
+    capturedAt,
+    dateKey: formatDateOnly(capturedAt),
+    imageData: takeSnapshot(),
+    metrics,
+    recommendation
+  };
+
+  state.captures.unshift(capture);
+  persistCaptures();
+  renderCapture(capture);
+  renderGallery();
+  el.gallerySubjectFilter.value = activeSubject.id;
+  setStatus(`"${activeSubject.name}" 촬영 결과가 저장되었습니다.`);
+}
+
+function bindEvents() {
+  el.btnSaveSubject.addEventListener("click", upsertSubjectFromForm);
+  el.btnNewSubject.addEventListener("click", resetSubjectForm);
+  el.subjectSelect.addEventListener("change", (event) => setSelectedSubject(event.target.value));
+  el.gallerySubjectFilter.addEventListener("change", renderGallery);
+  el.galleryDateFilter.addEventListener("change", renderGallery);
+  el.btnStart.addEventListener("click", startCamera);
+  el.btnStop.addEventListener("click", stopCamera);
+  el.btnCapture.addEventListener("click", captureAndAnalyze);
+  el.galleryGrid.addEventListener("click", handleGalleryClick);
+
+  el.guideFormat.addEventListener("change", (event) => {
+    state.guideFormat = event.target.value;
+    renderGuideEditor();
+  });
+  el.btnSaveGuide.addEventListener("click", saveGuideFromEditor);
+  el.btnResetGuide.addEventListener("click", () => {
+    state.guideConfig = structuredClone(DEFAULT_GUIDE_DATA);
+    persistGuide();
+    renderGuideEditor();
+    refreshRecommendationsFromGuide();
+    showGuideMessage("기본 도수치료 가이드로 복원되었습니다.");
+  });
+  el.btnImportGuide.addEventListener("click", () => el.guideFileInput.click());
+  el.btnExportGuide.addEventListener("click", () => {
+    const ext = state.guideFormat === "json" ? "json" : "yaml";
+    downloadText(`body-analysis-guide.${ext}`, serializeGuide(state.guideConfig, state.guideFormat));
+  });
+  el.guideFileInput.addEventListener("change", async (event) => {
+    const [file] = event.target.files || [];
+    if (!file) return;
+    const text = await file.text();
+    const ext = file.name.endsWith(".json") ? "json" : "yaml";
+    try {
+      const parsed = parseGuideText(text, ext);
+      validateGuideConfig(parsed);
+      state.guideConfig = parsed;
+      persistGuide();
+      state.guideFormat = ext;
+      el.guideFormat.value = ext;
+      renderGuideEditor();
+      refreshRecommendationsFromGuide();
+      showGuideMessage(`"${file.name}" 파일을 불러왔습니다.`);
+    } catch (error) {
+      showGuideMessage(`파일 불러오기 실패: ${error.message}`, true);
+    } finally {
+      event.target.value = "";
+    }
+  });
+}
+
+function initUi() {
+  renderSubjectOptions();
+  renderGallery();
+  renderGuideEditor();
+  if (state.captures.length > 0) {
+    renderCapture(state.captures[0]);
+  } else {
+    el.capturePreview.innerHTML = `<div class="capture-preview-empty">촬영 후 이 영역에 이미지와 추천 가이드가 함께 표시됩니다.</div>`;
+  }
+}
+
+loadState();
+bindEvents();
+initUi();
 initModel();
 </script>
 </body>
